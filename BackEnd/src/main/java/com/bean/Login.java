@@ -19,7 +19,7 @@ public class Login {
 	private int isadmin;
 	
 	@OneToMany (mappedBy = "login")
-	private List<OrderInfo> listOfOrders;
+	//private List<OrderInfo> listOfOrders;
 
 	public int getUid() {
 		return uid;
@@ -53,19 +53,19 @@ public class Login {
 		this.isadmin = isadmin;
 	}
 
-	public List<OrderInfo> getListOfOrders() {
-		return listOfOrders;
-	}
+	//public List<OrderInfo> getListOfOrders() {
+		//return listOfOrders;
+	//}
 
-	public void addOrder (OrderInfo orderInfo) {
-		this.listOfOrders.add(orderInfo);
-		orderInfo.setLogin(this);
-	}
+	//public void addOrder (OrderInfo orderInfo) {
+		//this.listOfOrders.add(orderInfo);
+		//orderInfo.setLogin(this);
+	//}
 
-	@Override
-	public String toString() {
-		return "Login [uid=" + uid + ", username=" + username + ", password=" + password + ", isadmin=" + isadmin
-				+ ", listOfOrders=" + listOfOrders + "]";
-	}
+	//@Override
+	//public String toString() {
+		//return "Login [uid=" + uid + ", username=" + username + ", password=" + password + ", isadmin=" + isadmin
+			//	+ ", listOfOrders=" + listOfOrders + "]";
+	//}
 
 }
