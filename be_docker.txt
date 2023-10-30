@@ -1,1 +1,27 @@
+EC2:
+sudo yum install java
+java -version
+
+sudo yum install git
+git version
+
+-- needed?
+sudo yum install java-11-amazon-corretto-headless
+sudo yum install java-11-amazon-corretto
+-- devel turned to be good, removed a prequisitive
+sudo yum install java-11-amazon-corretto-devel
+sudo yum install java-11-amazon-corretto-jmods
+
+sudo yum install java-17-amazon-corretto-headless
+sudo yum install javapackages-tools
+
+sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+sudo yum install -y apache-maven
+
+sudo yum install java-1.8.0-devel
+sudo /usr/sbin/alternatives --config java
+
+mvn --version
+
 ./mvnw install
