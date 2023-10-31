@@ -25,3 +25,54 @@ sudo /usr/sbin/alternatives --config java
 mvn --version
 
 ./mvnw install
+
+
+
+--	new	--
+
+-- install Java 1.8
+sudo yum install java-1.8.0-devel
+java -version
+
+-- install maven
+-- add maven repo
+sudo wget https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+-- specify version to be installed
+sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+-- run installer
+sudo yum install -y apache-maven
+-- confirm installation
+mvn --version
+
+-- install git
+sudo yum install git
+git version
+
+-- install docker
+-- refresh yum list
+sudo yum update
+-- find docker image
+sudo yum search docker
+-- get docker version
+sudo yum info docker
+-- run installer
+sudo yum install docker
+-- confirm installation
+docker version
+
+-- download git repo
+mkdir repo
+cd repo
+git clone https://github.com/karmiris/Full_Stack_Capstone_Project.git
+
+-- compile the code
+cd Full_Stack_Capstone_Project
+cd BackEnd
+mvn clean install
+or?
+mvn clean package
+mvn clean install -Χ (to debug)
+
+--dockerize the image
+docker build --tag=back_end:latest .
+docker run -p8887:9090 back_end:latest    (9090 ip in application properties, 8887 ip to be exposed on server - needs to be opened in firewall)
