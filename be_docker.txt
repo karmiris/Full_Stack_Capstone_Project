@@ -30,8 +30,18 @@ mvn --version
 
 --	new	--
 
+-- install jenkins
+# Become a root
+sudo su -
+# Jenkins repo is added to yum.repos.d
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+# Import key from Jenkins
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+# Install Jenkins
+yum install jenkins -y
+
 -- install Java 1.8
-sudo yum install java-1.8.0-devel
+sudo yum install -y java-1.8.0-devel
 java -version
 
 -- install maven
@@ -45,7 +55,7 @@ sudo yum install -y apache-maven
 mvn --version
 
 -- install git
-sudo yum install git
+sudo yum install -y git
 git version
 
 -- install docker
@@ -56,23 +66,82 @@ sudo yum search docker
 -- get docker version
 sudo yum info docker
 -- run installer
-sudo yum install docker
+sudo yum install -y docker
 -- confirm installation
 docker version
 
--- download git repo
+-- download git repo  (not needed)
 mkdir repo
 cd repo
 git clone https://github.com/karmiris/Full_Stack_Capstone_Project.git
 
--- compile the code
+-- compile the code	(not needed)
 cd Full_Stack_Capstone_Project
 cd BackEnd
 mvn clean install
-or?
-mvn clean package
 mvn clean install -Χ (to debug)
 
---dockerize the image
-docker build --tag=back_end:latest .
-docker run -p8887:9090 back_end:latest    (9090 ip in application properties, 8887 ip to be exposed on server - needs to be opened in firewall)
+-- dockerize and run the image (not needed)
+sudo service docker start
+sudo docker build --tag=back_end:latest .
+sudo docker images
+sudo docker run -d -p8887:9090 back_end:latest    (9090 ip in application properties, 8887 ip to be exposed on server - needs to be opened in firewall)
+
+http://{host}:8887/allUsers	(open firewall)
+
+-- run jenkins
+# Become a root, no need to execute if you are alread root.
+sudo su -
+# You can enable the Jenkins service to start at boot with the command:
+systemctl enable jenkins
+# You can start the Jenkins service with the command:
+systemctl start jenkins
+# You can check the status of the Jenkins service using the command:
+systemctl status jenkins
+# Fetch password
+http://<Public-IPv4-address>:8080/  (open firewall)
+
+-- create job
+add git
+build script:
+cd BackEnd
+mvn clean install
+mvn clean install -DskipTests
+
+
+-- run jenkins container (not needed; bad idea)
+sudo docker pull jenkins/jenkins
+sudo docker images
+sudo docker run -d -p8886:8080 jenkins/jenkins:latest
+sudo docker ps
+sudo docker exec <container_name> cat /var/jenkins_home/secrets/initialAdminPassword
+
+http://{host}:8886	(open firewall)
+
+
+-- run jenkins/maven container (not needed; bad idea)
+-- create image
+cd /home/ec2-user
+vi Dockerfile
+
+file content:
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update && apt-get install -y maven
+USER jenkins
+
+sudo docker build -t jenkins-maven .
+sudo docker images
+-- run image
+sudo docker run -d -p8886:8080 jenkins-maven:latest
+sudo docker ps
+-- get jenkins admin password
+sudo docker exec <container_name> cat /var/jenkins_home/secrets/initialAdminPassword
+
+http://{host}:8886	(open firewall)
+
+-- create job
+add git
+build script:
+cd BackEnd
+mvn clean install
