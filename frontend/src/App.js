@@ -1,26 +1,62 @@
-import logo from './logo.svg';
 import './App.css';
+import {Link, Route, Routes} from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <button type="button" class="btn btn-success">Success</button>
-    </div>
-  );
+  let isAdmin = useSelector(gs=>gs.isAdmin);
+  let fname = useSelector(gs=>gs.login);
+
+  if (fname = '')
+    return (
+      <div>
+        <h2>React Routing App</h2>  
+        -- create buttons in another file
+        <Link to="/login">Login</Link>
+        <Link to="/signup">Signup</Link>
+        <hr/>
+
+        <Routes>  -- all routes
+          <Route path='/login' element={<Login/>}></Route>
+          <Route path='/signup' element={<Signup/>}></Route>
+        </Routes>
+      </div>
+    );
+  else if (isAdmin) {
+    return(
+      <div>
+        <h2>React Routing App</h2>  
+        <Link to="/home">Home</Link>
+        <Link to="/viewUsers">View All Users</Link>
+        <Link to="/changePass">Change Password</Link>
+        <Link to="/logout">Logout</Link>
+        <hr/>
+
+        <Routes>
+          <Route path='/home' element={<Home/>}></Route>
+          <Route path='/viewUsers' element={<ViewUsers/>}></Route>
+          <Route path='/changePass' element={<ChangePass/>}></Route>
+          <Route path='/logout' element={<Logout/>}></Route>
+        </Routes>
+      </div>
+    );
+  }
+  else if (!isAdmin) {
+    return(
+      <div>
+        <h2>React Routing App</h2>  
+        <Link to="/home">Home</Link>
+        <Link to="/changePass">Change Password</Link>
+        <Link to="/logout">Logout</Link>
+        <hr/>
+
+        <Routes>
+          <Route path='/home' element={<Home/>}></Route>
+          <Route path='/changePass' element={<ChangePass/>}></Route>
+          <Route path='/logout' element={<Logout/>}></Route>
+        </Routes>
+      </div>
+    );
+  }
 }
 
 export default App;

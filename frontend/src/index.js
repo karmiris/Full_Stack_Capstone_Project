@@ -4,11 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// routing features
+import { BrowserRouter} from 'react-router-dom';   
+
+// global variables specific
+import reducer from './reducer';
+import { legacy_createStore as createStore} from 'redux'
+import { Provider } from 'react-redux';
+
+// createStore is function part of redux
+// which take reducer as a parameter to make global state variable. 
+const store = createStore(reducer);   
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>    
 );
 
 // If you want to start measuring performance in your app, pass a function
