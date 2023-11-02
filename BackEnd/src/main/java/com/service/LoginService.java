@@ -34,15 +34,18 @@ public class LoginService {
 		}
 	}
 		
-	public String signIn (Login login) {
+	public int signIn (Login login) {
 		Login ll = loginRepository.signIn(login.getUsername(), login.getPassword());
 		if (ll == null) 
-			return "Invalid username or password";
+			//return "Invalid username or password";
+			return -1;
 		else {
 			if (ll.getIsadmin() == 1)
-				return "Admin has successfully logged in!";
+				//return "Admin has successfully logged in!";
+				return 2;
 			else 
-				return "Customer has successfully logged in!";
+				//return "Customer has successfully logged in!";
+				return 1;
 		}
 		
 	}
@@ -55,11 +58,13 @@ public class LoginService {
 		return loginRepository.findLogin(username);
 	}
 	
-	public String updatePass(Login user) {
-		int result = loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin());
-		if (result == 1)
-			return "Password Updated Successfully";
-		else
-			return "Password Update has Failed!";
+	public int updatePass(Login user) {
+		//int result = loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin());
+		//if (result == 1)
+			//return "Password Updated Successfully";
+		//else
+			//return "Password Update has Failed!";
+		return loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin());
+		// returns number of updated records (1: success, 0: failed)
 	}
 }

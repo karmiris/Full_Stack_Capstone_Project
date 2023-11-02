@@ -38,6 +38,26 @@ public class LoginController {
 	public List<Login> getAllUsers() {
 		return loginService.findAllLogin();
 	}
+	
+	// http://localhost:9090/signUp 
+	@PostMapping(value = "signUp", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String signUp(@RequestBody Login login) {  // @RequestBody: gets json input from frontend
+		//System.out.println(login); // call toString method
+		return loginService.signUp(login);
+	}
+	
+	// http://localhost:9090/signIn 
+	@PostMapping(value = "signIn", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public int signIn(@RequestBody Login login) {
+		return loginService.signIn(login);
+	}
+	
+	// http://localhost:9090/updatePass 
+	@PostMapping(value = "updatePass", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public int updatePass(@RequestBody Login login) {
+		return loginService.updatePass(login);
+	}
+		
 	/*
 	@RequestMapping(value = "/",method = RequestMethod.GET)
 	public String open (Model mm, Login ll) {
