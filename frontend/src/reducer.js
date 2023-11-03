@@ -1,7 +1,7 @@
 // global variables initialize
 let initialState = {                
     isAdmin: false,
-    login: ""            
+    login: "a"            
 }
 
 // global variables update
