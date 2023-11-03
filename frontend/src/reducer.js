@@ -1,8 +1,7 @@
 // global variables initialize
 let initialState = {                
     isAdmin: false,
-    login: "",
-    message: ""
+    login: ""
 }
 
 // global variables update
@@ -11,12 +10,10 @@ function reducer(state = initialState, action) {
     case "LOGIN":
       return {...state, isAdmin: action.payload.isAdmin, login: action.payload.login};
     case "LOGOUT":
-      return {...state, isAdmin: false, login: "", message: ""}
-    case "SIGNUP":
-      return {...state, message: "Account created successfully"}
+      return {...state, isAdmin: false, login: ""};
   }
   return state;
 }
 
-export default reducer;
 // file imported in index.js
+export default reducer;

@@ -1,5 +1,6 @@
 body {
   background-color: antiquewhite !important;
+  user-select: none;
 } 
 
 h1 {

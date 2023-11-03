@@ -54,8 +54,13 @@ public class LoginController {
 	
 	// http://localhost:9090/updatePass 
 	@PostMapping(value = "updatePass", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public int updatePass(@RequestBody Login login) {
-		return loginService.updatePass(login);
+	//public int updatePass(String username, String oldPass, int isAdm, String newPass) {
+	public int updatePass(@RequestBody String request) {
+		Login login = new Login();
+		login.setUsername(username);
+		login.setPassword(oldPass);
+		login.setIsadmin(isAdm);
+		return loginService.updatePass(login, newPass);
 	}
 		
 	/*

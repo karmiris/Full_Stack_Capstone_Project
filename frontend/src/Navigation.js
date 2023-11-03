@@ -9,12 +9,12 @@ function Navigation() {
         return (
             <div>
                 <Link to="/login">
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" className="btn btn-primary">
                         Login
                     </button>
                 </Link>
                 <Link to="/signup">
-                    <button type="button" class="btn btn-warning">
+                    <button type="button" className="btn btn-warning">
                         SignUp
                     </button>
                 </Link>
@@ -24,22 +24,22 @@ function Navigation() {
         return(
             <div>
                 <Link to="/home">
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" className="btn btn-primary">
                         Home
                     </button>
                 </Link>
                 <Link to="/viewUsers">
-                    <button type="button" class="btn btn-secondary">
+                    <button type="button" className="btn btn-secondary">
                         View All Users
                     </button>
                 </Link>
                 <Link to="/changePass">
-                    <button type="button" class="btn btn-danger">
+                    <button type="button" className="btn btn-danger">
                         Change Password
                     </button>
                 </Link>
                 <Link to="/logout">
-                    <button type="button" class="btn btn-info">
+                    <button type="button" className="btn btn-info">
                         Logout
                     </button>
                 </Link>
@@ -49,17 +49,17 @@ function Navigation() {
     return(
         <div>
             <Link to="/home">
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" className="btn btn-primary">
                         Home
                     </button>
                 </Link>
                 <Link to="/changePass">
-                    <button type="button" class="btn btn-danger">
+                    <button type="button" className="btn btn-danger">
                         Change Password
                     </button>
                 </Link>
                 <Link to="/logout">
-                    <button type="button" class="btn btn-info">
+                    <button type="button" className="btn btn-info">
                         Logout
                     </button>
                 </Link>

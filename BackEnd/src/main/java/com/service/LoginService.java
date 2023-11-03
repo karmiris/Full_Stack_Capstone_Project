@@ -16,6 +16,10 @@ public class LoginService {
 	LoginRepository loginRepository;
 	
 	public String signUp (Login login) {
+		if (login.getUsername().length() == 0)
+			return "Username must not be empty";
+		if (login.getPassword().length() == 0)
+			return "Password must not be empty";
 		if (login.getIsadmin() == 1)
 			return "No more Admin accounts can be created";
 		else {
@@ -58,13 +62,17 @@ public class LoginService {
 		return loginRepository.findLogin(username);
 	}
 	
-	public int updatePass(Login user) {
-		//int result = loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin());
-		//if (result == 1)
-			//return "Password Updated Successfully";
-		//else
-			//return "Password Update has Failed!";
-		return loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin());
+	public int updatePass(Login user, String newPass) {
+		if (newPass == null || newPass.length() == 0) return -4;
+		
+		int result = signIn(user);
+		
+		// errors
+		if (result == -1) return -1; // Bad password
+		if (result == 1 && user.getIsadmin() == 1) return -2; // Customer trying to update admin user
+		if (result == 2 && user.getIsadmin() == 0) return -3; // Admin trying to update customer user
+		
 		// returns number of updated records (1: success, 0: failed)
+		return loginRepository.updatePass(user.getUsername(), user.getPassword(), user.getIsadmin(), newPass);		
 	}
 }
