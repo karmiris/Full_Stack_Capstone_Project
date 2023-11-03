@@ -17,9 +17,8 @@ function App() {
   return (
     <div class="container">      
       <h1 class="col-12">MEDICARE WEB APPLICATION</h1>  
-      <Navigation/>
-      <hr/>
-      <Message/>
+      <Navigation/><hr/>
+      <Message/><br/>
 
       <Routes>  
         <Route path='/login' element={<Login/>}></Route>

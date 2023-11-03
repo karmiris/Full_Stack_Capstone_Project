@@ -5,8 +5,6 @@ function Navigation() {
     let isAdmin = useSelector(gs=>gs.isAdmin);
     let username = useSelector(gs=>gs.login);
 
-    console.log("username = ", username);
-    console.log("isAdmin = ", isAdmin);
     if (username == "")
         return (
             <div>

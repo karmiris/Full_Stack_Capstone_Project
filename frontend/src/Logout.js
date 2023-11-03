@@ -10,7 +10,7 @@ function Logout() {
 
     return(
         <div>
-            Logout
+            <br/><h6 style={{color:"red"}}>Successful Logout</h6>
         </div>
     );
 }
