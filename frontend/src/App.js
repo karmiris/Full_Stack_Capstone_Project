@@ -9,7 +9,7 @@ import Login from './Login';
 import Signup from './Signup';
   import Home from './Home';
   import ViewUsers from './ViewUsers';
-  import ChangePass from './ChangePass';
+import ChangePass from './ChangePass';
 import Logout from './Logout';
 
 function App() {

@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 /*
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.Login;
@@ -52,17 +54,20 @@ public class LoginController {
 		return loginService.signIn(login);
 	}
 	
-	// http://localhost:9090/updatePass 
+	// http://localhost:9090/updatePass
 	@PostMapping(value = "updatePass", consumes = MediaType.APPLICATION_JSON_VALUE)
-	//public int updatePass(String username, String oldPass, int isAdm, String newPass) {
-	public int updatePass(@RequestBody String request) {
-		Login login = new Login();
-		login.setUsername(username);
-		login.setPassword(oldPass);
-		login.setIsadmin(isAdm);
-		return loginService.updatePass(login, newPass);
+	public int updatePass(@RequestBody Login login) {
+		return loginService.updatePass(login);
 	}
-		
+
+	// http://localhost:9090/findUser/{uname}
+	@RequestMapping(value = "findUser/{uname}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Login> findUsers (@PathVariable("uname") String username) {
+		List<Login> result = new ArrayList<>();
+		result.add(loginService.findLogin(username));
+		return result;
+	}
+	
 	/*
 	@RequestMapping(value = "/",method = RequestMethod.GET)
 	public String open (Model mm, Login ll) {

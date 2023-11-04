@@ -1,7 +1,8 @@
 // global variables initialize
 let initialState = {                
     isAdmin: false,
-    login: ""
+    login: "",
+    host: "http://localhost:9090/"
 }
 
 // global variables update

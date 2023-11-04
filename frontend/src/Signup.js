@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 function Signup() {
@@ -7,14 +8,21 @@ function Signup() {
 
     let [msg, setMessage] = useState("");
     let [login, setLogin] = useState({username:"", password:"", isadmin: 0}); //async call, re-renders element
+    
+    let host = useSelector(gs=>gs.host);
+    var formControls = document.getElementsByClassName("form-control");
+
+    let clearForms = function() {
+        setLogin({username:"", password:"", isadmin: 0});
+        Array.from(formControls).forEach((formControl) => { formControl.value = ""; });
+    }
 
     let saveUser = function (event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         setMessage("");
         console.log(login);
-        axios.post("http://localhost:9090/signUp", login).then(result=> {
+        axios.post(host + "signUp", login).then(result=> {
             setMessage(result.data);
-            setLogin({username:"", password:"", isadmin: 0});
             if (result.data == "Account created successfully") {
                 navigate("/login", {
                     state: { message: result.data }
@@ -23,11 +31,12 @@ function Signup() {
         }).catch(error=> {
             setMessage(error);
         })
+        clearForms();
     }
 
     let resetAction = function (event) {
         setMessage("");
-        setLogin({username:"", password:"", isadmin: 0});
+        clearForms();
     }
 
     return(

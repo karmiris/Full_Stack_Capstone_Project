@@ -1,42 +1,72 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ChangePass() {
+    let navigate = useNavigate();
+
     let [msg, setMessage] = useState("");
     let [data, setData] = useState({oldPass: "", pass1: "", pass2: ""}); 
     const isadmin = useRef(0);
     let uname = useSelector(gs=>gs.login);
     let isAdm = useSelector(gs=>gs.isAdmin);
+    let host = useSelector(gs=>gs.host);
+
+    var formControls = document.getElementsByClassName("form-control");
+
+    let clearForms = function() {
+        setData({oldPass: "", pass1: "", pass2: ""});
+        Array.from(formControls).forEach((formControl) => { formControl.value = ""; });
+    }
+    
+    useEffect(()=> { // check user is logged in
+        if (uname == "") navigate("/login");
+    });
 
     let updatePass = function (event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        if (data.pass1 != data.pass2)
+        if (data.pass1 != data.pass2) {
             setMessage("New Passwords do not much");
+        }
+        else if (data.pass1 == data.oldPass) {
+            setMessage("New Password cannot be same as old password");
+        }
         else {
             if (isAdm)
                 isadmin.current = 1;
+            axios.post(host + "signIn", {username: uname, password: data.oldPass}).then(result=> {
+                    switch(result.data) {
+                        case -1: 
+                            setMessage("Wrong old Password");
+                            break;
+                        case 2:
+                        case 1: 
+                            axios.post(host + "updatePass", {username: uname, isadmin: isadmin.current, password: data.pass1}).then(result=> {
+                                switch(result.data) {
+                                    case 101:
+                                        setMessage("New Password cannot be empty"); break;
+                                    case 1:
+                                        setMessage("Password Successfully Updated"); break;
+                                    default:
+                                        setMessage("Internal Error");
+                                }
+                            }).catch(error=> {
+                                setMessage(error);
+                            })
+                    }
+                }).catch(error=> {
+                    setMessage(error);
+                })        
 
-                // First try to "login" with the old pass, then update new!
-
-            axios.post("http://localhost:9090/updatePass", {username: uname, oldPass: data.oldPass, isAdm: isadmin.current, newPass: data.pass1}).then(result=> {
-                switch(result.data) {
-                    case -1:
-                        setMessage("Wrong Old Password"); break;
-                    case 1:
-                        setMessage("Password Successfully Updated"); break;
-                    default:
-                        setMessage("Internal Error");
-                }
-            }).catch(error=> {
-                setMessage(error);
-            })
         }
+        clearForms();
     }
 
     let resetAction = function (event) {
+        event.preventDefault();
         setMessage("");
-        setData({oldPass: "", pass1: "", pass2: ""});
+        clearForms();
     }
 
     return(
@@ -44,7 +74,7 @@ function ChangePass() {
             <h2>Update Password</h2>
             <form className="form-group" onSubmit = {updatePass} >
                 <label className="form-label">Old Password</label>
-                <input type="password" name="oldPass" className="form-control" 
+                <input type="password" name="oldPass" className="form-control"
                     onChange = {(event) => 
                         setData((previousValue)=> {
                             return {...previousValue, oldPass:event.target.value}

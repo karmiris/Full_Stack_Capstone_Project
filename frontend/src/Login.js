@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,6 +12,14 @@ function Login() {
     const isAdm = useRef(false); //sync call, no re-rendering
     let [login, setLogin] = useState({username:"", password:""}); //async call, re-renders element
 
+    let host = useSelector(gs=>gs.host);
+    var formControls = document.getElementsByClassName("form-control");
+
+    let clearForms = function() {
+        setLogin({username:"", password:""});
+        Array.from(formControls).forEach((formControl) => { formControl.value = ""; });
+    }
+
     useEffect(()=> { // runs when component is loaded
         if (location.state != null)
             setMessage(location.state.message); // get legacy message from signup page (if applicable)
@@ -20,11 +28,10 @@ function Login() {
     let verifyUser = function (event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         setMessage("");
-        axios.post("http://localhost:9090/signIn", login).then(result=> {
+        axios.post(host + "signIn", login).then(result=> {
             switch(result.data) {
                 case -1: 
                     setMessage("Invalid username or password");
-                    setLogin({username:"", password:""});
                     break;
                 case 2:
                     isAdm.current = true;
@@ -36,12 +43,14 @@ function Login() {
             }             
         }).catch(error=> {
             setMessage(error);
-        })        
+        })      
+        clearForms();  
     }
 
     let resetAction = function (event) {
+        event.preventDefault();
         setMessage("");
-        setLogin({username:"", password:""});
+        clearForms();
     }
 
     return(
@@ -65,8 +74,8 @@ function Login() {
                 <input type="submit" value="Submit" className="btn btn-success"/>
                 <input type="reset" value="Reset" className="btn btn-danger"
                     onSubmit = {resetAction} />
-            </form>
-            <br/><h5 style={{color:"red"}}>{msg}</h5>
+            </form><br/>
+            <h5 style={{color:"red"}}>{msg}</h5>
         </div>
     )
 }

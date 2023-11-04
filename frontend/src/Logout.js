@@ -6,11 +6,11 @@ function Logout() {
     
     useEffect(()=> { // runs when component is loaded
         dispatch({type:"LOGOUT"});
-    }); 
+    });
 
     return(
         <div>
-            <br/><h6 style={{color:"red"}}>Successful Logout</h6>
+            <br/><h6 style={{color:"red"}}>Logout Successful</h6>
         </div>
     );
 }

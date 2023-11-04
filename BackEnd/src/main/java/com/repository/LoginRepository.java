@@ -22,10 +22,9 @@ public interface LoginRepository extends JpaRepository<Login, Integer>{
 	
 	@Modifying
 	@Transactional
-	@Query("update Login set password = :newPass where username = :username and password = :password and isadmin = :isadmin")
+	@Query("update Login set password = :password where username = :username and isadmin = :isadmin")
 	public int updatePass(@Param("username") String username, 
 			@Param("password") String password, 
-			@Param("isadmin") int isadmin,
-			@Param("newPass") String newPass);
+			@Param("isadmin") int isadmin);
 	
 }
