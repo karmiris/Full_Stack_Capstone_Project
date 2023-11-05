@@ -59,7 +59,7 @@ function Signup() {
                     }/><br/>
                 <input type="submit" value="Submit" className="btn btn-success"/>
                 <input type="reset" value="Reset" className="btn btn-danger"
-                    onSubmit = {resetAction} />
+                    onClick = {resetAction} />
             </form>
             <br/><h5 style={{color:"red"}}>{msg}</h5>
         </div>

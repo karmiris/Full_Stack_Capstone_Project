@@ -21,7 +21,7 @@ function Login() {
     }
 
     useEffect(()=> { // runs when component is loaded
-        if (location.state != null)
+        if (location.state != null && msg == "")
             setMessage(location.state.message); // get legacy message from signup page (if applicable)
     });
 
@@ -73,7 +73,7 @@ function Login() {
                     }/><br/>
                 <input type="submit" value="Submit" className="btn btn-success"/>
                 <input type="reset" value="Reset" className="btn btn-danger"
-                    onSubmit = {resetAction} />
+                    onClick = {resetAction} />
             </form><br/>
             <h5 style={{color:"red"}}>{msg}</h5>
         </div>
