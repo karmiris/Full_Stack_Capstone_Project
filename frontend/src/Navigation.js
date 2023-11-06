@@ -28,6 +28,11 @@ function Navigation() {
                         Home
                     </button>
                 </Link>
+                <Link to="/manageCategories">
+                    <button type="button" className="btn btn-warning">
+                        Categories
+                    </button>
+                </Link>
                 <Link to="/viewUsers">
                     <button type="button" className="btn btn-secondary">
                         View All Users

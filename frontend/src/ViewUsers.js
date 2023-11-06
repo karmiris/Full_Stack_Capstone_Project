@@ -26,17 +26,8 @@ function ViewUsers() {
             setMessage(error);
         })
     }
-/*
-    let userRecord = users.map(u=>
-        <tr>
-            <td>{u.uid}</td>
-            <td>{u.username}</td>
-            <td>{u.isadmin}</td>
-        </tr>
-    )
-*/
 
-    let userRecord = (users ?? []).filter(u => u != null).length > 0 ? (
+    let userRecord = (users ?? []).filter(u => u != null).length > 0 ? ( // empty list means first element is null
         users.map(u => (
             <tr>
                 <td>{u.uid}</td>
