@@ -42,15 +42,15 @@ public class CategoryController {
 		return result;
 	}
 		
-	// http://localhost:9090/storeCategory
-	@PostMapping(value = "storeCategory", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String storeCategory(@RequestBody Category category) {
-		return categoryService.storeCategory(category);
+	// http://localhost:9090/storeCategory/{cname}
+	@GetMapping(value = "storeCategory/{cname}")
+	public String storeCategory (@PathVariable("cname") String cname) {
+		return categoryService.storeCategory(cname);
 	}
 	
 	//http://localhost:9090/deleteCategory/1  // to delete category cid 1
 	@DeleteMapping(value = "deleteCategory/{cid}")
-	public String deleteCategory(@PathVariable("cid") int cid) {			
+	public String deleteCategory (@PathVariable("cid") int cid) {			
 		return categoryService.deleteCategory(cid);
 	}
 	

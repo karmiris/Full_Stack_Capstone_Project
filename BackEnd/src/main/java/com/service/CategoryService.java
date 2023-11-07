@@ -15,11 +15,15 @@ public class CategoryService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
-	public String storeCategory(Category category) {
-		Category result = findCategoryByName(category.getCategoryname());
+	public String storeCategory(String cname) {
+		if (cname.length() == 0)
+			return "Category name cannot be empty";
+		Category result = findCategoryByName(cname);
 		if (result != null) 
 			return "Category already exists";
 		try {
+			Category category = new Category();
+			category.setCategoryname(cname);
 			categoryRepository.save(category);
 			return "Category successfully created";
 		}

@@ -8,6 +8,9 @@ function ManageCategories() {
 
     let [categories, setCategories] = useState([null]);
     let [searchCategory, setSearchCategory] = useState(""); 
+    let [newCategory, setNewCategory] = useState(""); 
+    let [msgupdate, setMessageUpdate]=useState("Or Create Category");
+    let [btnupdate, setButtonUpdate]=useState("Create");
     let [msg, setMessage]=useState("");
     let uname = useSelector(gs=>gs.login);
     let host = useSelector(gs=>gs.host);
@@ -20,6 +23,9 @@ function ManageCategories() {
 
     let clearForms = function() {
         setSearchCategory("");
+        setNewCategory("");
+        setMessageUpdate("Or Create Category");
+        setButtonUpdate("Create");
         Array.from(formControls).forEach((formControl) => { formControl.value = ""; });        
     }
 
@@ -61,9 +67,22 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
+        clearForms();
     }
 
-    let insertCategory = function(event) {}
+    let insertCategory = function(event) {
+        event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
+        if (newCategory == "") return; // don't run for empty string
+        console.log(host + "storeCategory/" + newCategory);
+        axios.get(host + "storeCategory/" + newCategory).then(result=>{
+            setMessage(result.data);
+            loadCategories(false);
+        }).catch(error=> {
+            setMessage(error);
+        })
+        clearForms();
+    }
+
     let updateCategory = function(event) {}
 
     let findCategory = function(event) {
@@ -87,14 +106,22 @@ function ManageCategories() {
             <h2>Category Management Page</h2><br/>
             
             <input type="reset" value="Load All Categories" className="btn btn-danger"
-                    onClick = {() => loadCategories(true)} /><br/><br/>
+                    onClick = {() => loadCategories(true)} /><br/>
 
             <form className="form-group" onSubmit = {findCategory} >
                 <label className="form-label">Or Find Category by Name</label>
                 <input type="text" name="searchCategory" className="form-control" 
                     onChange = {(event) => setSearchCategory(event.target.value)}
-                /><br/>
+                />
                 <input type="submit" value="Search" className="btn btn-success"/>                
+            </form><br/>
+
+            <form className="form-group" onSubmit = {insertCategory} >
+                <label className="form-label">{msgupdate}</label>
+                <input type="text" name="addCategory" className="form-control" 
+                    onChange = {(event) => setNewCategory(event.target.value)}
+                />
+                <input type="submit" value="Create" className="btn btn-success"/>                
             </form><br/>
 
             <h5 style={{color:"red"}}>{msg}</h5>
