@@ -11,6 +11,7 @@ function ManageCategories() {
     let [newCategory, setNewCategory] = useState(""); 
     let [msgupdate, setMessageUpdate]=useState("Or Create Category");
     let [btnupdate, setButtonUpdate]=useState("Create");
+    let [btntype, setButtonType]=useState("btn btn-success");
     let [msg, setMessage]=useState("");
     let uname = useSelector(gs=>gs.login);
     let host = useSelector(gs=>gs.host);
@@ -21,11 +22,14 @@ function ManageCategories() {
         if (uname == "") navigate("/login"); // check user is logged in
     });
 
-    let clearForms = function() {
+    let clearForms = function(isUpdate) {
         setSearchCategory("");
         setNewCategory("");
-        setMessageUpdate("Or Create Category");
-        setButtonUpdate("Create");
+        if (!isUpdate) {
+            setMessageUpdate("Or Create Category");
+            setButtonUpdate("Create");
+            setButtonType("btn btn-success");
+        }
         Array.from(formControls).forEach((formControl) => { formControl.value = ""; });        
     }
 
@@ -67,7 +71,7 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
-        clearForms();
+        clearForms(false);
     }
 
     let insertCategory = function(event) {
@@ -80,14 +84,27 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
-        clearForms();
+        clearForms(false);
     }
 
-    let updateCategory = function(event) {}
+    let updateCategory = function(event) {
+        clearForms(true);
+        setMessageUpdate("Update Category");
+        setButtonUpdate("Update");
+        setButtonType("btn btn-warning");
+    }
+
+    let updateCategoryFunc = function() {
+        // todo post
+    }
 
     let findCategory = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         if (searchCategory == "") return; // don't run for empty string
+        if (msgupdate == "Update Category") {
+            updateCategoryFunc();
+            return;
+        }
         axios.get(host + "findCategory/" + searchCategory).then(result=>{
             setCategories(result.data);
             console.log(result.data);
@@ -98,7 +115,7 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
-        clearForms();
+        clearForms(false);
     }
 
     return(
@@ -121,7 +138,7 @@ function ManageCategories() {
                 <input type="text" name="addCategory" className="form-control" 
                     onChange = {(event) => setNewCategory(event.target.value)}
                 />
-                <input type="submit" value="Create" className="btn btn-success"/>                
+                <input type="submit" value={btnupdate} className={btntype}/>                
             </form><br/>
 
             <h5 style={{color:"red"}}>{msg}</h5>
