@@ -54,6 +54,12 @@ public class CategoryController {
 		return categoryService.deleteCategory(cid);
 	}
 	
+	// http://localhost:9090/updateCategory
+		@PostMapping(value = "updateCategory", consumes = MediaType.APPLICATION_JSON_VALUE)
+		public int updateCategory(@RequestBody Category category) {
+			return categoryService.updateCategory(category);
+		}
+	
 	/*
 	@RequestMapping(value = "/adminHome",method = RequestMethod.GET)
 	public String back(Model mm) {

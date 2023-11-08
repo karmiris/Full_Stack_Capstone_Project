@@ -43,8 +43,20 @@ public class CategoryService {
 			return "Category successfully removed";
 		}
 		catch(Exception e) {
-			return "Category creation failed: " + e.getMessage();
+			return "Category deletion failed: " + e.getMessage();
 		}		 
+	}
+
+	public int updateCategory(Category category) {
+		// empty category name
+		if (category.getCategoryname() == null || category.getCategoryname().length() == 0) return 101;
+		
+		// name already exists
+		Category test = findCategoryByName(category.getCategoryname());
+		if (test != null) return 102;
+		
+		// returns number of updated records (1: success, 0: failed)
+		return categoryRepository.updateCategory(category.getCid(), category.getCategoryname());		
 	}
 	
 	public List<Category> findAllCategory() {

@@ -11,6 +11,7 @@ function ManageCategories() {
     let [newCategory, setNewCategory] = useState(""); 
     let [msgupdate, setMessageUpdate]=useState("Or Create Category");
     let [btnupdate, setButtonUpdate]=useState("Create");
+    let [cidupdate, setCidUpdate]=useState(0);
     let [btntype, setButtonType]=useState("btn btn-success");
     let [msg, setMessage]=useState("");
     let uname = useSelector(gs=>gs.login);
@@ -21,6 +22,10 @@ function ManageCategories() {
     useEffect(()=> { // runs when component is loaded
         if (uname == "") navigate("/login"); // check user is logged in
     });
+
+    const sleep = ms => new Promise( // delay for ms milliseconds
+        resolve => setTimeout(resolve, ms)
+      );
 
     let clearForms = function(isUpdate) {
         setSearchCategory("");
@@ -41,6 +46,7 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
+        clearForms(false);
     }
 
     let categoryRecord = (categories ?? []).filter(c => c != null).length > 0 ? ( // empty list means first element is null
@@ -77,7 +83,10 @@ function ManageCategories() {
     let insertCategory = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         if (newCategory == "") return; // don't run for empty string
-        console.log(host + "storeCategory/" + newCategory);
+        if (msgupdate == "Update Category") {
+            updateCategoryFunc();
+            return;
+        }
         axios.get(host + "storeCategory/" + newCategory).then(result=>{
             setMessage(result.data);
             loadCategories(false);
@@ -87,27 +96,40 @@ function ManageCategories() {
         clearForms(false);
     }
 
-    let updateCategory = function(event) {
+    let updateCategory = function(event, cid) {
         clearForms(true);
         setMessageUpdate("Update Category");
         setButtonUpdate("Update");
         setButtonType("btn btn-warning");
+        setCidUpdate(cid);
     }
 
     let updateCategoryFunc = function() {
-        // todo post
+        axios.post(host + "updateCategory", {cid: cidupdate, categoryname: newCategory}).then(result=> {
+            switch(result.data) {
+                case 101:
+                    setMessage("Category name cannot be empty"); break;
+                case 102:
+                    setMessage("Category name already exists"); break;
+                case 1:
+                    setMessage("Category Successfully Updated"); break;
+                default:
+                    setMessage("Internal Error");
+            }
+        }).catch(error=> {
+            setMessage(error);
+        })
+        sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
+            clearForms(false);
+            loadCategories(false);            
+        })
     }
 
     let findCategory = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         if (searchCategory == "") return; // don't run for empty string
-        if (msgupdate == "Update Category") {
-            updateCategoryFunc();
-            return;
-        }
         axios.get(host + "findCategory/" + searchCategory).then(result=>{
             setCategories(result.data);
-            console.log(result.data);
             if ((result.data ?? []).filter(c => c != null).length > 0)
                 setMessage("1 Category Found");
             else
@@ -115,6 +137,11 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
+        clearForms(false);
+    }
+
+    let resetFunc = function(event) {
+        event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         clearForms(false);
     }
 
@@ -138,7 +165,9 @@ function ManageCategories() {
                 <input type="text" name="addCategory" className="form-control" 
                     onChange = {(event) => setNewCategory(event.target.value)}
                 />
-                <input type="submit" value={btnupdate} className={btntype}/>                
+                <input type="submit" value={btnupdate} className={btntype}/>      
+                <input type="reset" value="Reset" className="btn btn-danger"
+                    onClick = {resetFunc} /><br/>          
             </form><br/>
 
             <h5 style={{color:"red"}}>{msg}</h5>
