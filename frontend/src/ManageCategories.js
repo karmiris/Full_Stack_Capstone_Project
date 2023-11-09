@@ -9,7 +9,7 @@ function ManageCategories() {
     let [categories, setCategories] = useState([null]);
     let [searchCategory, setSearchCategory] = useState(""); 
     let [newCategory, setNewCategory] = useState(""); 
-    let [msgupdate, setMessageUpdate]=useState("Or Create Category");
+    let [msgupdate, setMessageUpdate]=useState("Or Create new Category");
     let [btnupdate, setButtonUpdate]=useState("Create");
     let [cidupdate, setCidUpdate]=useState(0);
     let [btntype, setButtonType]=useState("btn btn-success");
@@ -119,7 +119,7 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
-        sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
+            sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
             clearForms(false);
             loadCategories(false);            
         })

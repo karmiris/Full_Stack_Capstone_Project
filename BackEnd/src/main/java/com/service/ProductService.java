@@ -64,7 +64,8 @@ public class ProductService {
 		if (test != null) return 103;
 		
 		// returns number of updated records (1: success, 0: failed)
-		return productRepository.updateProduct(product.getPid(), product.getPname(), product.getPrice(), product.getProductimage(), product.getCategory().getCid());		
+		return productRepository.updateProduct(product.getPid(), product.getPname(), product.getPrice(), 
+				product.getProductimage(), product.getCategory().getCid(), product.getIsEnabled());		
 	}
 	
 	public List<Product> findAllProducts() {

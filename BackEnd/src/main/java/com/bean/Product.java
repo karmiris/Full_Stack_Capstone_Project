@@ -18,6 +18,7 @@ public class Product {
 	private int pid;
 	private String pname;
 	private float price;
+	private boolean isEnabled;
 	@Lob
 	private String productimage;
 	
@@ -66,6 +67,15 @@ public class Product {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
+	
+	public boolean getIsEnabled() {
+		return isEnabled;
+	}
+
+	public void setIsEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	
 /*
 	public List<OrderInfo> getListOfOrders() {
 		return listOfOrders;

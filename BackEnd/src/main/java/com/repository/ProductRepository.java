@@ -15,15 +15,16 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	@Query("select p from Product p where p.pid = :pid")
 	public Product findProductByPid(@Param("pid") Integer pid);
 	
-	@Query("select p from Product p where p.pname = :name")
+	@Query("select p from Product p where p.pname = :pname")
 	public Product findProductByName(@Param("pname") String name);
 	
 	@Modifying
 	@Transactional
-	@Query("update Product set pname = :pname, price = :price, productimage = :pimage, category_cid = :cid where pid = :pid")
+	@Query("update Product set pname = :pname, price = :price, productimage = :pimage, category_cid = :cid, isEnabled = :isEnabled where pid = :pid")
 	public int updateProduct(@Param("pid") int pid, 
 			@Param("pname") String pname,
 			@Param("price") float price,
 			@Param("pimage") String pimage,
-			@Param("cid") int cid);
+			@Param("cid") int cid,
+			@Param("isEnabled") boolean isEnabled);
 }

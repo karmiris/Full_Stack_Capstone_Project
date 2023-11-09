@@ -30,7 +30,12 @@ function Navigation() {
                 </Link>
                 <Link to="/manageCategories">
                     <button type="button" className="btn btn-warning">
-                        Categories
+                        Manage Categories
+                    </button>
+                </Link>
+                <Link to="/ManageProducts">
+                    <button type="button" className="btn btn-success">
+                        Manage Products
                     </button>
                 </Link>
                 <Link to="/viewUsers">
