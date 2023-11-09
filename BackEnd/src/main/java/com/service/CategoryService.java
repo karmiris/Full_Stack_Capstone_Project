@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bean.Category;
-import com.bean.Login;
 import com.repository.CategoryRepository;
 
 @Service

@@ -5,20 +5,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.bean.Category;
-import com.bean.Login;
 import com.service.CategoryService;
 
 @RestController
@@ -55,33 +51,9 @@ public class CategoryController {
 	}
 	
 	// http://localhost:9090/updateCategory
-		@PostMapping(value = "updateCategory", consumes = MediaType.APPLICATION_JSON_VALUE)
-		public int updateCategory(@RequestBody Category category) {
-			return categoryService.updateCategory(category);
-		}
-	
-	/*
-	@RequestMapping(value = "/adminHome",method = RequestMethod.GET)
-	public String back(Model mm) {
-		return "adminHome";
+	@PostMapping(value = "updateCategory", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public int updateCategory(@RequestBody Category category) {
+		return categoryService.updateCategory(category);
 	}
-		
-	@RequestMapping(value = "/viewCategoryPage",method = RequestMethod.GET)
-	public String viewCategory(Model mm, Category cc) {
-		List<Category> listOfCategories = categoryService.findAllCategory();
-		mm.addAttribute("category", cc);
-		mm.addAttribute("categories", listOfCategories);
-		return "manageCategory";
-	}	
 	
-	@RequestMapping(value = "/storeCategoryInfo",method = RequestMethod.POST)
-	public String storeAddCategoryPage(Model mm, Category cc) {
-		String result = categoryService.storeCategory(cc);
-		List<Category> listOfCategories = categoryService.findAllCategory();
-		mm.addAttribute("category", cc);
-		mm.addAttribute("msg", result);
-		mm.addAttribute("categories", listOfCategories);
-		return "manageCategory";
-	}
-	*/
 }
