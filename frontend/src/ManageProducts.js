@@ -14,13 +14,15 @@ function ManageProducts() {
     let [pidupdate, setPidUpdate]=useState(0);
     let [btntype, setButtonType] = useState("btn btn-success");
     let [msg, setMessage] = useState("");
+    let [enableProd, setEnable] = useState("true");
     let uname = useSelector(gs=>gs.login);
     let host = useSelector(gs=>gs.host);
 
     var formControls = document.getElementsByClassName("form-control");
 
     useEffect(()=> { // runs when component is loaded
-        if (uname == "") navigate("/login"); // check user is logged in
+        if (uname == "") navigate("/login"); // check user is logged in   
+        console.log(newProduct);    
     });
 
     const sleep = ms => new Promise( // delay for ms milliseconds
@@ -153,6 +155,11 @@ function ManageProducts() {
         clearForms(false);
     }
 
+    let changeEnable = function(event) {
+        setEnable(current => !current);
+        setNewProduct((previousValue)=> {return {...previousValue, isEnabled:!newProduct.isEnabled}});
+    }
+
     return(
         <div>
             <h2>Product Management Page</h2><br/>
@@ -161,7 +168,7 @@ function ManageProducts() {
                     onClick = {() => loadProducts(true)} /><br/>
 
             <form className="form-group" onSubmit = {findProduct} >
-                <label className="form-label">Or Find Product by Name:</label>
+                <label className="form-label"><b>Or Find Product by Name:</b></label>
                 <input type="text" name="searchProduct" className="form-control" 
                     onChange = {(event) => setSearchProductName(event.target.value)}
                 />
@@ -169,7 +176,7 @@ function ManageProducts() {
             </form><br/>
 
             <form className="form-group" onSubmit = {insertProduct} >
-                <div>{msgupdate}:</div>
+                <div><b>{msgupdate}:</b></div>
                 <label className="form-label">Product Name</label>
                 <input type="text" name="addProductName" className="form-control" 
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, pname:event.target.value}})}
@@ -183,8 +190,8 @@ function ManageProducts() {
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, productimage:event.target.value}})}
                 />
                 <label className="form-label">Enabled</label>
-                <input type="checkbox" name="addEnabled" className="form-check" checked // todo
-                    onChange = {handleChange} // todo
+                <input type="checkbox" name="addEnabled" className="form-check" defaultChecked={enableProd} 
+                    onChange = {changeEnable}
                 />
                 <input type="submit" value={btnupdate} className={btntype}/>      
                 <input type="reset" value="Reset" className="btn btn-danger"
