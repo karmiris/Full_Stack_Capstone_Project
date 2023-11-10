@@ -119,7 +119,7 @@ function ManageCategories() {
         }).catch(error=> {
             setMessage(error);
         })
-            sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
+            sleep(500).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
             clearForms(false);
             loadCategories(false);            
         })

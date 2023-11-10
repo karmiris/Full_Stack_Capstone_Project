@@ -8,21 +8,26 @@ function ManageProducts() {
 
     let [products, setProducts] = useState([null]);
     let [searchProductName, setSearchProductName] = useState("");
-    let [newProduct, setNewProduct] = useState({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
+    let [newProduct, setNewProduct] = useState({pname:"", price:0.0, productimage:"", cid:-1, cname:"", isEnabled:true});
     let [msgupdate, setMessageUpdate] = useState("Or Create new Product");
     let [btnupdate, setButtonUpdate] = useState("Create");
     let [pidupdate, setPidUpdate]=useState(0);
     let [btntype, setButtonType] = useState("btn btn-success");
     let [msg, setMessage] = useState("");
     let [enableProd, setEnable] = useState("true");
+    let [options, setOptions] = useState([null]);
+    let [optionsLoaded, setOptionsLoaded] = useState(false);
     let uname = useSelector(gs=>gs.login);
     let host = useSelector(gs=>gs.host);
 
     var formControls = document.getElementsByClassName("form-control");
 
     useEffect(()=> { // runs when component is loaded
-        if (uname == "") navigate("/login"); // check user is logged in   
-        console.log(newProduct);    
+        if (uname == "") navigate("/login"); // check user is logged in           
+        loadOptions();
+        console.log("newProduct", newProduct);
+        console.log("options", options);
+        console.log("optionsLoaded", optionsLoaded);
     });
 
     const sleep = ms => new Promise( // delay for ms milliseconds
@@ -31,7 +36,7 @@ function ManageProducts() {
 
     let clearForms = function(isUpdate) {
         setSearchProductName("");
-        setNewProduct("");
+        setNewProduct({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
         if (!isUpdate) {
             setMessageUpdate("Or Create new Product");
             setButtonUpdate("Create");
@@ -75,7 +80,8 @@ function ManageProducts() {
             ))
         ) : (
             <p>No products found</p>
-    );
+        )
+    ;
     
     let deleteProduct = function(event, pid) {
         axios.delete(host + "deleteProduct/" + pid).then(result=>{
@@ -160,6 +166,24 @@ function ManageProducts() {
         setNewProduct((previousValue)=> {return {...previousValue, isEnabled:!newProduct.isEnabled}});
     }
 
+    function loadOptions() {
+        if (!optionsLoaded) {
+            axios.get(host + "allCategories").then(result=>{
+                console.log("result.data", result.data);
+                setOptions(result.data);
+                setOptionsLoaded(true); // stop reloading data and refreshing page
+            }).catch(error=> {
+                setMessage(error);
+            })        
+        }
+    }
+    
+    let changeCategory = (event) => {
+        console.log("loaded");
+        let filteredOptions = options.filter(record => record.categoryname == event.target.value);
+        setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: event.target.value}});
+    }
+
     return(
         <div>
             <h2>Product Management Page</h2><br/>
@@ -178,17 +202,30 @@ function ManageProducts() {
             <form className="form-group" onSubmit = {insertProduct} >
                 <div><b>{msgupdate}:</b></div>
                 <label className="form-label">Product Name</label>
-                <input type="text" name="addProductName" className="form-control" 
+                <input type="text" name="addProductName" className="form-control" required
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, pname:event.target.value}})}
                 />
                 <label className="form-label">Price</label>
-                <input type="decimal" name="addPrice" className="form-control" 
+                <input type="number" name="addPrice" className="form-control" required min="0" step="0.01"
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, price:event.target.value}})}
                 />
                 <label className="form-label">Image URL</label>
                 <input type="url" name="addImage" className="form-control" 
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, productimage:event.target.value}})}
                 />
+                <label className="form-label">Category</label>                
+                <select name="addCategory" className="form-select" value={newProduct.categoryname} onChange = {changeCategory}>
+                    <option value="" selected disabled hidden>Choose Category</option>
+                    {(options ?? []).filter(option => option != null).length > 0 ? (
+                        options.map((option) => (
+                            <option key={option.cid} value={option.categoryname}>
+                                {option.categoryname}
+                            </option>
+                        ))
+                    ) : (
+                        <option>No categories</option>
+                    )}
+                </select>                
                 <label className="form-label">Enabled</label>
                 <input type="checkbox" name="addEnabled" className="form-check" defaultChecked={enableProd} 
                     onChange = {changeEnable}
