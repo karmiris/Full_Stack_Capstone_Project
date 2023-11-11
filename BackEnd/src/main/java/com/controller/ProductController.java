@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.bean.Product;
+import com.bean.Category;
 import com.service.ProductService;
 
 @RestController

@@ -56,7 +56,7 @@ function ManageCategories() {
                 <td>{c.categoryname}</td>
                 <td>
                     <input type="button" value="Update Category" className="btn btn-warning"
-                        onClick={(event)=> {updateCategory(event, c.cid);}}
+                        onClick={(event)=> {updateCategory(event, c.cid, c.categoryname);}}
                     />
                 </td>
                 <td>
@@ -96,11 +96,12 @@ function ManageCategories() {
         clearForms(false);
     }
 
-    let updateCategory = function(event, cid) {
+    let updateCategory = function(event, cid, categoryname) {
         clearForms(true);
         setMessageUpdate("Update Category");
         setButtonUpdate("Update");
         setButtonType("btn btn-warning");
+        document.getElementById("addCategory").value = categoryname;
         setCidUpdate(cid);
     }
 
@@ -162,7 +163,7 @@ function ManageCategories() {
 
             <form className="form-group" onSubmit = {insertCategory} >
                 <label className="form-label">{msgupdate}</label>
-                <input type="text" name="addCategory" className="form-control" 
+                <input type="text" name="addCategory" className="form-control" id="addCategory"
                     onChange = {(event) => setNewCategory(event.target.value)}
                 />
                 <input type="submit" value={btnupdate} className={btntype}/>      

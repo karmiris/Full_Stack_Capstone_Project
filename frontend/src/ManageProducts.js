@@ -14,7 +14,7 @@ function ManageProducts() {
     let [pidupdate, setPidUpdate]=useState(0);
     let [btntype, setButtonType] = useState("btn btn-success");
     let [msg, setMessage] = useState("");
-    let [enableProd, setEnable] = useState("true");
+    let [enableProd, setEnable] = useState(true);
     let [options, setOptions] = useState([null]);
     let [optionsLoaded, setOptionsLoaded] = useState(false);
     let uname = useSelector(gs=>gs.login);
@@ -28,6 +28,7 @@ function ManageProducts() {
         console.log("newProduct", newProduct);
         console.log("options", options);
         console.log("optionsLoaded", optionsLoaded);
+        console.log("enableProd flag: ", enableProd);
     });
 
     const sleep = ms => new Promise( // delay for ms milliseconds
@@ -41,13 +42,16 @@ function ManageProducts() {
             setMessageUpdate("Or Create new Product");
             setButtonUpdate("Create");
             setButtonType("btn btn-success");
+            setEnable(true);    
         }
         Array.from(formControls).forEach((formControl) => { formControl.value = ""; });        
+        document.getElementById("addCategory").value = -1;
     }
 
     let loadProducts = function(nomessage) {
         axios.get(host + "allProducts").then(result=>{
             setProducts(result.data);
+            console.log("All Products:", result.data);
             if (nomessage)
                 setMessage("All Products Loaded");
         }).catch(error=> {
@@ -61,10 +65,10 @@ function ManageProducts() {
             <tr>
                 <td>{p.pid}</td>
                 <td>{p.pname}</td>
-                <td>{p.price}</td>
+                <td>{p.price}€</td>
                 <td><img src={p.productimage} width="100px" height="100px"/></td>
                 <td>{p.category.categoryname}</td>
-                <td>{p.isEnabled}</td>                
+                <td>{(p.isEnabled) ? "Yes" : "No"}</td>                
                 <td>
                     <input type="button" value="Update Product" className="btn btn-warning"
                         onClick={(event)=> {updateProduct(event, p);}}
@@ -99,9 +103,9 @@ function ManageProducts() {
             updateProductFunc();
             return;
         }
-        //axios.post(host + "storeProduct/", {pid: newProduct.pid, pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
-          //      cid: newProduct.cid, cname: newProduct.cname, isEnabled: newProduct.isEnabled}).then(result=> {
-        axios.post(host + "storeProduct/", newProduct).then(result=> {
+        console.log("lift off:", newProduct);
+        axios.post(host + "storeProduct/", {pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
+                category: {cid: newProduct.cid}, isEnabled: newProduct.isEnabled}).then(result=> {
             setMessage(result.data);
             loadProducts(false);
         }).catch(error=> {
@@ -110,12 +114,21 @@ function ManageProducts() {
         clearForms(false);
     }
 
-    let updateProduct = function(event, pid) {
+    let updateProduct = function(event, product) {
+        console.log("Update product: ", product);
         clearForms(true);
         setMessageUpdate("Update Product");
         setButtonUpdate("Update");
         setButtonType("btn btn-warning");
-        setPidUpdate(pid);
+        setPidUpdate(product.pid);
+        document.getElementById("addProductName").value = product.pname;
+        document.getElementById("addPrice").value = product.price;
+        document.getElementById("addImage").value = product.productimage;
+        document.getElementById("addCategory").value = product.category.cid;
+        document.getElementById("addEnabled").value = setEnable(product.isEnabled);    
+        setNewProduct( {pname:"", price:0.0, productimage:"", cid:-1, cname:"", isEnabled:true});
+        setNewProduct((previousValue)=> {return {...previousValue, pname: product.pname, price: product.price, productimage: product.productimage,
+            cid: product.category.cid, cname: product.category.categoryname, isEnabled: product.isEnabled }});
     }
 
     let updateProductFunc = function() {
@@ -180,8 +193,12 @@ function ManageProducts() {
     
     let changeCategory = (event) => {
         console.log("loaded");
-        let filteredOptions = options.filter(record => record.categoryname == event.target.value);
-        setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: event.target.value}});
+        let filteredOptions = options.filter(record => record.cid == event.target.value);
+        setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: filteredOptions[0].categoryname}});
+    }
+
+    let enableProdFunc = () => {
+        (enableProd ? "checked" : "");
     }
 
     return(
@@ -202,23 +219,23 @@ function ManageProducts() {
             <form className="form-group" onSubmit = {insertProduct} >
                 <div><b>{msgupdate}:</b></div>
                 <label className="form-label">Product Name</label>
-                <input type="text" name="addProductName" className="form-control" required
+                <input type="text" name="addProductName" className="form-control" required id="addProductName"
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, pname:event.target.value}})}
                 />
                 <label className="form-label">Price</label>
-                <input type="number" name="addPrice" className="form-control" required min="0" step="0.01"
+                <input type="number" name="addPrice" className="form-control" required min="0.01" step="0.01" id="addPrice"
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, price:event.target.value}})}
                 />
                 <label className="form-label">Image URL</label>
-                <input type="url" name="addImage" className="form-control" 
+                <input type="url" name="addImage" className="form-control" required id="addImage"
                     onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, productimage:event.target.value}})}
                 />
                 <label className="form-label">Category</label>                
-                <select name="addCategory" className="form-select" value={newProduct.categoryname} onChange = {changeCategory}>
-                    <option value="" selected disabled hidden>Choose Category</option>
+                <select name="addCategory" className="form-select" required value={newProduct.categoryname} id="addCategory" onChange = {changeCategory}>
+                    <option value="-1" selected disabled hidden>Choose Category</option>
                     {(options ?? []).filter(option => option != null).length > 0 ? (
                         options.map((option) => (
-                            <option key={option.cid} value={option.categoryname}>
+                            <option key={option.cid} value={option.cid}>
                                 {option.categoryname}
                             </option>
                         ))
@@ -227,7 +244,7 @@ function ManageProducts() {
                     )}
                 </select>                
                 <label className="form-label">Enabled</label>
-                <input type="checkbox" name="addEnabled" className="form-check" defaultChecked={enableProd} 
+                <input type="checkbox" name="addEnabled" id="addEnabled" className="form-check" {enableProdFunc}  // ***
                     onChange = {changeEnable}
                 />
                 <input type="submit" value={btnupdate} className={btntype}/>      

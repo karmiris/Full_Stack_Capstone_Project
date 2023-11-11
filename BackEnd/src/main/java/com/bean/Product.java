@@ -10,6 +10,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Product {
 
@@ -92,4 +94,9 @@ public class Product {
 				+ ", category=" + category + ", listOfOrders=" + listOfOrders + "]";
 	}
 */
+	@Override
+	public String toString() {
+		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", productimage=" + productimage
+				+ ", category=" + category + "]";
+	}
 }

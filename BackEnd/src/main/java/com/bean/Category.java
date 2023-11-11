@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Category {
 
@@ -16,6 +18,7 @@ public class Category {
 	private int cid;
 	private String categoryname;
 	
+	@JsonBackReference
 	@OneToMany (mappedBy = "category")
 	private List<Product> listOfProducts;
 	

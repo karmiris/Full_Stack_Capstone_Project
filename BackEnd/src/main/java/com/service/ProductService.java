@@ -25,15 +25,19 @@ public class ProductService {
 		Product result = findProductByName(product.getPname());
 		if (result != null) 
 			return "Product name already exists";
-		Category result1 = categoryRepository.findCategoryByCid(product.getCategory().getCid());
-		if (result1 != null) 
-			return "Non existing category";
+		System.out.println("product: " + product);
+		try {
+			Category category = categoryRepository.findCategoryByCid(product.getCategory().getCid());
+		}
+		catch(Exception e) {
+			return "Non existing category: " + e.getMessage();
+		}
 		try {
 			productRepository.save(product);
 			return "Product details stored successfully";
 		}
 		catch(Exception e) {
-			return "Category creation failed: " + e.getMessage();
+			return "Product creation failed: " + e.getMessage();
 		}
 	}
 	
