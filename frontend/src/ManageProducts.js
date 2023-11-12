@@ -23,8 +23,16 @@ function ManageProducts() {
     var formControls = document.getElementsByClassName("form-control");
 
     useEffect(()=> { // runs when component is loaded
-        if (uname == "") navigate("/login"); // check user is logged in           
+        // check user is logged in
+        if (uname == "") navigate("/login");
+        
+        // load categories
         loadOptions();
+
+        // reset checkboxes
+        if (enableProd) document.getElementById("addEnabled").checked = true;
+        else document.getElementById("addEnabled").checked = false;
+        
         console.log("newProduct", newProduct);
         console.log("options", options);
         console.log("optionsLoaded", optionsLoaded);
@@ -72,7 +80,6 @@ function ManageProducts() {
                 <td>
                     <input type="button" value="Update Product" className="btn btn-warning"
                         onClick={(event)=> {updateProduct(event, p);}}
-                        //onClick={(event)=> {updateProduct(event, p.pid);}}
                     />
                 </td>
                 <td>
@@ -132,7 +139,8 @@ function ManageProducts() {
     }
 
     let updateProductFunc = function() {
-        axios.post(host + "updateProduct", {pid: pidupdate, newProduct}).then(result=> {
+        axios.post(host + "updateProduct/", {pid: pidupdate, pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
+                category: {cid: newProduct.cid}, isEnabled: newProduct.isEnabled}).then(result=> {
             switch(result.data) {
                 case 101:
                     setMessage("Product name cannot be empty"); break;
@@ -149,8 +157,8 @@ function ManageProducts() {
             setMessage(error);
         })
             sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
-            clearForms(false);
-            loadProducts(false);            
+                clearForms(false);
+                loadProducts(false);            
         })
     }
 
@@ -197,10 +205,6 @@ function ManageProducts() {
         setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: filteredOptions[0].categoryname}});
     }
 
-    let enableProdFunc = () => {
-        (enableProd ? "checked" : "");
-    }
-
     return(
         <div>
             <h2>Product Management Page</h2><br/>
@@ -209,10 +213,48 @@ function ManageProducts() {
                     onClick = {() => loadProducts(true)} /><br/>
 
             <form className="form-group" onSubmit = {findProduct} >
-                <label className="form-label"><b>Or Find Product by Name:</b></label>
-                <input type="text" name="searchProduct" className="form-control" 
+                <div><b>Or Find Product:</b></div>                
+
+                <input type="checkbox" name="enName" id="enName" className="form-check"
+                    onChange = {changeEnable}
+                />
+                <label className="form-label">Product Name</label>
+                <select name="selName" className="form-select" value={newProduct.categoryname} id="selName" onChange = {changeCategory}>
+                    <option value="0" selected>Equals</option>
+                    <option value="1" >Contains</option>
+                </select>
+                <input type="text" name="searchName" className="form-control" 
                     onChange = {(event) => setSearchProductName(event.target.value)}
                 />
+
+                <input type="checkbox" name="enPrice" id="enPrice" className="form-check"
+                    onChange = {changeEnable}
+                />
+                <label className="form-label">Product Price</label>
+                <select name="selPrice" className="form-select" required value={newProduct.categoryname} id="selPrice" onChange = {changeCategory}>
+                    <option value="0" >&lt;</option>
+                    <option value="1" >&le;</option>
+                    <option value="2" selected>=</option>
+                    <option value="3" >&ge;</option>
+                    <option value="4" >&gt;</option>
+                </select>
+                <input type="number" name="searchPrice" className="form-control" 
+                    onChange = {(event) => setSearchProductName(event.target.value)}
+                />
+
+                <label className="form-label">Product Category</label>
+                <select name="selCategory" className="form-select" required value={newProduct.categoryname} id="selCategory" onChange = {changeCategory}>                
+                    <option value="-1" selected>Any Category</option>
+                    {(options ?? []).filter(option => option != null).length > 0 ? (
+                        options.map((option) => (
+                            <option key={option.cid} value={option.cid}>
+                                {option.categoryname}
+                            </option>
+                        ))
+                    ) : (
+                        <option disabled hidden></option>
+                    )}
+                </select>
                 <input type="submit" value="Search" className="btn btn-success"/>                
             </form><br/>
 
@@ -242,11 +284,11 @@ function ManageProducts() {
                     ) : (
                         <option>No categories</option>
                     )}
-                </select>                
-                <label className="form-label">Enabled</label>
-                <input type="checkbox" name="addEnabled" id="addEnabled" className="form-check" {enableProdFunc}  // ***
+                </select>            
+                <input type="checkbox" name="addEnabled" id="addEnabled" className="form-check"
                     onChange = {changeEnable}
                 />
+                <label className="form-label">Enabled</label><br/>
                 <input type="submit" value={btnupdate} className={btntype}/>      
                 <input type="reset" value="Reset" className="btn btn-danger"
                     onClick = {resetFunc} /><br/>          

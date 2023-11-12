@@ -11,3 +11,8 @@ h1 {
   margin-left: 1%;
   margin-right: 1%;
 }
+
+.form-check {
+  display: inline !important;
+  margin-right: 1%;
+}

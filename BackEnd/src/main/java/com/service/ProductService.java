@@ -65,7 +65,7 @@ public class ProductService {
 				
 		// name already exists
 		Product test = findProductByName(product.getPname());
-		if (test != null) return 103;
+		if (test != null && test.getPid() != product.getPid()) return 103;
 		
 		// returns number of updated records (1: success, 0: failed)
 		return productRepository.updateProduct(product.getPid(), product.getPname(), product.getPrice(), 
