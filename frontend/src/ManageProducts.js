@@ -7,7 +7,8 @@ function ManageProducts() {
     let navigate = useNavigate();
 
     let [products, setProducts] = useState([null]);
-    let [searchProductName, setSearchProductName] = useState("");
+    let [searchProduct, setSearchProduct] = useState({pname:"", enName: false, price:0.0, enPrice:false, cid:-1});
+    let [searchEnableFilter, setSearchEnableFilter] = useState({enName:false, enPrice:false});
     let [newProduct, setNewProduct] = useState({pname:"", price:0.0, productimage:"", cid:-1, cname:"", isEnabled:true});
     let [msgupdate, setMessageUpdate] = useState("Or Create new Product");
     let [btnupdate, setButtonUpdate] = useState("Create");
@@ -32,11 +33,17 @@ function ManageProducts() {
         // reset checkboxes
         if (enableProd) document.getElementById("addEnabled").checked = true;
         else document.getElementById("addEnabled").checked = false;
-        
+        if (searchEnableFilter.enName) document.getElementById("enName").checked = true;
+        else document.getElementById("enName").checked = false;
+        if (searchEnableFilter.enPrice) document.getElementById("enPrice").checked = true;
+        else document.getElementById("enPrice").checked = false;
+
         console.log("newProduct", newProduct);
         console.log("options", options);
         console.log("optionsLoaded", optionsLoaded);
         console.log("enableProd flag: ", enableProd);
+        console.log("searchProduct: ", searchProduct);
+        console.log("searchEnableFilter: ", searchEnableFilter);
     });
 
     const sleep = ms => new Promise( // delay for ms milliseconds
@@ -44,16 +51,19 @@ function ManageProducts() {
       );
 
     let clearForms = function(isUpdate) {
-        setSearchProductName("");
-        setNewProduct({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
+        setSearchProduct({pname:"", enName: false, price:0.0, enPrice:false, cid:-1});
+        setSearchEnableFilter({enName:false, enPrice:false});
         if (!isUpdate) {
+            setNewProduct({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
             setMessageUpdate("Or Create new Product");
             setButtonUpdate("Create");
             setButtonType("btn btn-success");
-            setEnable(true);    
+            setEnable(true);
         }
         Array.from(formControls).forEach((formControl) => { formControl.value = ""; });        
         document.getElementById("addCategory").value = -1;
+        document.getElementById("selName").value = 0;
+        document.getElementById("selPrice").value = 2;
     }
 
     let loadProducts = function(nomessage) {
@@ -133,7 +143,6 @@ function ManageProducts() {
         document.getElementById("addImage").value = product.productimage;
         document.getElementById("addCategory").value = product.category.cid;
         document.getElementById("addEnabled").value = setEnable(product.isEnabled);    
-        setNewProduct( {pname:"", price:0.0, productimage:"", cid:-1, cname:"", isEnabled:true});
         setNewProduct((previousValue)=> {return {...previousValue, pname: product.pname, price: product.price, productimage: product.productimage,
             cid: product.category.cid, cname: product.category.categoryname, isEnabled: product.isEnabled }});
     }
@@ -164,8 +173,8 @@ function ManageProducts() {
 
     let findProduct = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        if (searchProductName == "") return; // don't run for empty string
-        axios.get(host + "findProduct/" + searchProductName).then(result=>{
+        if (searchProduct == "") return; // don't run for empty string
+        axios.get(host + "findProduct/" + searchProduct).then(result=>{
             setProducts(result.data);
             if ((result.data ?? []).filter(p => p != null).length > 0)
                 setMessage("1 Product Found");
@@ -180,11 +189,6 @@ function ManageProducts() {
     let resetFunc = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
         clearForms(false);
-    }
-
-    let changeEnable = function(event) {
-        setEnable(current => !current);
-        setNewProduct((previousValue)=> {return {...previousValue, isEnabled:!newProduct.isEnabled}});
     }
 
     function loadOptions() {
@@ -216,7 +220,10 @@ function ManageProducts() {
                 <div><b>Or Find Product:</b></div>                
 
                 <input type="checkbox" name="enName" id="enName" className="form-check"
-                    onChange = {changeEnable}
+                    onChange = {() => {
+                        setSearchEnableFilter((previousValue)=> {return {...previousValue, enName:!searchEnableFilter.enName}}); 
+                        setSearchProduct((previousValue)=> {return {...previousValue, enName:!searchProduct.enName}});
+                    }}
                 />
                 <label className="form-label">Product Name</label>
                 <select name="selName" className="form-select" value={newProduct.categoryname} id="selName" onChange = {changeCategory}>
@@ -224,11 +231,14 @@ function ManageProducts() {
                     <option value="1" >Contains</option>
                 </select>
                 <input type="text" name="searchName" className="form-control" 
-                    onChange = {(event) => setSearchProductName(event.target.value)}
+                    onChange = {(event) => setSearchProduct((previousValue)=> {return {...previousValue, pname:event.target.value}})}
                 />
 
                 <input type="checkbox" name="enPrice" id="enPrice" className="form-check"
-                    onChange = {changeEnable}
+                    onChange = {() => {
+                        setSearchEnableFilter((previousValue)=> {return {...previousValue, enPrice:!searchEnableFilter.enPrice}}); 
+                        setSearchProduct((previousValue)=> {return {...previousValue, enPrice:!searchProduct.enPrice}});
+                    }}
                 />
                 <label className="form-label">Product Price</label>
                 <select name="selPrice" className="form-select" required value={newProduct.categoryname} id="selPrice" onChange = {changeCategory}>
@@ -239,7 +249,7 @@ function ManageProducts() {
                     <option value="4" >&gt;</option>
                 </select>
                 <input type="number" name="searchPrice" className="form-control" 
-                    onChange = {(event) => setSearchProductName(event.target.value)}
+                    onChange = {(event) => setSearchProduct((previousValue)=> {return {...previousValue, price:event.target.value}})}
                 />
 
                 <label className="form-label">Product Category</label>
@@ -252,7 +262,7 @@ function ManageProducts() {
                             </option>
                         ))
                     ) : (
-                        <option disabled hidden></option>
+                        <option disabled hidden>No categories</option>
                     )}
                 </select>
                 <input type="submit" value="Search" className="btn btn-success"/>                
@@ -286,7 +296,7 @@ function ManageProducts() {
                     )}
                 </select>            
                 <input type="checkbox" name="addEnabled" id="addEnabled" className="form-check"
-                    onChange = {changeEnable}
+                    onChange = {() => {setEnable(current => !current); setNewProduct((previousValue)=> {return {...previousValue, isEnabled:!newProduct.isEnabled}});}}
                 />
                 <label className="form-label">Enabled</label><br/>
                 <input type="submit" value={btnupdate} className={btntype}/>      
