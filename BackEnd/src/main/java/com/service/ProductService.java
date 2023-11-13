@@ -19,6 +19,44 @@ public class ProductService {
 	@Autowired
 	CategoryRepository categoryRepository;
 	
+	// used to transfer data for "findProductList" operation
+	public static class findProductClass {
+		public String pname;
+		public boolean enName;
+		public String opName;
+		public float price;
+		public boolean enPrice;
+		public String opPrice;
+		public String cid;		
+	}
+	
+	public List<Product> findProductList(findProductClass fclass) {
+		List<Product> result = findAllProducts();
+		
+		if (fclass.enName) {
+			switch (fclass.opName) {
+				case "0": result.removeIf(product -> product.getPname() != fclass.pname); break;
+				case "1": result.removeIf(product -> !product.getPname().contains(fclass.pname)); break;
+			}
+		}
+
+		if (fclass.enPrice) {
+			switch (fclass.opPrice) {
+				case "0": result.removeIf(product -> product.getPrice() >= fclass.price); break;
+				case "1": result.removeIf(product -> product.getPrice() > fclass.price); break;
+				case "2": result.removeIf(product -> product.getPrice() != fclass.price); break;
+				case "3": result.removeIf(product -> product.getPrice() < fclass.price); break;
+				case "4": result.removeIf(product -> product.getPrice() <= fclass.price); break;
+			}
+		}
+		
+		if (Integer.parseInt(fclass.cid) != -1) {
+			result.removeIf(product -> product.getCategory().getCid() != Integer.parseInt(fclass.cid));
+		}
+		
+		return result;
+	}
+	
 	public String storeProduct(Product product) {
 		if (product.getPname() == null || product.getPname().length() == 0)
 			return "Category name cannot be empty";

@@ -7,9 +7,9 @@ function ManageProducts() {
     let navigate = useNavigate();
 
     let [products, setProducts] = useState([null]);
-    let [searchProduct, setSearchProduct] = useState({pname:"", enName: false, price:0.0, enPrice:false, cid:-1});
+    let [searchProduct, setSearchProduct] = useState({pname: "", enName: false, opName: "0", price: 0.0, enPrice: false, opPrice: "2", cid: "-1"});
     let [searchEnableFilter, setSearchEnableFilter] = useState({enName:false, enPrice:false});
-    let [newProduct, setNewProduct] = useState({pname:"", price:0.0, productimage:"", cid:-1, cname:"", isEnabled:true});
+    let [newProduct, setNewProduct] = useState({pname: "", price: 0.0, productimage: "", cid: -1, cname: "", isEnabled: true});
     let [msgupdate, setMessageUpdate] = useState("Or Create new Product");
     let [btnupdate, setButtonUpdate] = useState("Create");
     let [pidupdate, setPidUpdate]=useState(0);
@@ -51,7 +51,7 @@ function ManageProducts() {
       );
 
     let clearForms = function(isUpdate) {
-        setSearchProduct({pname:"", enName: false, price:0.0, enPrice:false, cid:-1});
+        setSearchProduct({pname: "", enName: false, opName: "0", price: 0.0, enPrice: false, opPrice: "2", cid: "-1"});
         setSearchEnableFilter({enName:false, enPrice:false});
         if (!isUpdate) {
             setNewProduct({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
@@ -64,6 +64,7 @@ function ManageProducts() {
         document.getElementById("addCategory").value = -1;
         document.getElementById("selName").value = 0;
         document.getElementById("selPrice").value = 2;
+        document.getElementById("selCategory").value = -1;        
     }
 
     let loadProducts = function(nomessage) {
@@ -120,7 +121,6 @@ function ManageProducts() {
             updateProductFunc();
             return;
         }
-        console.log("lift off:", newProduct);
         axios.post(host + "storeProduct/", {pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
                 category: {cid: newProduct.cid}, isEnabled: newProduct.isEnabled}).then(result=> {
             setMessage(result.data);
@@ -173,13 +173,10 @@ function ManageProducts() {
 
     let findProduct = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        if (searchProduct == "") return; // don't run for empty string
-        axios.get(host + "findProduct/" + searchProduct).then(result=>{
+        axios.post(host + "findProduct/", searchProduct).then(result=> {
             setProducts(result.data);
-            if ((result.data ?? []).filter(p => p != null).length > 0)
-                setMessage("1 Product Found");
-            else
-                setMessage("No products found");
+            let x = (result.data ?? []).filter(p => p != null).length;
+            setMessage(x + " Product(s) Found");
         }).catch(error=> {
             setMessage(error);
         })
@@ -204,7 +201,6 @@ function ManageProducts() {
     }
     
     let changeCategory = (event) => {
-        console.log("loaded");
         let filteredOptions = options.filter(record => record.cid == event.target.value);
         setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: filteredOptions[0].categoryname}});
     }
@@ -226,7 +222,10 @@ function ManageProducts() {
                     }}
                 />
                 <label className="form-label">Product Name</label>
-                <select name="selName" className="form-select" value={newProduct.categoryname} id="selName" onChange = {changeCategory}>
+                <select name="selName" className="form-select" value={newProduct.categoryname} id="selName" 
+                    onChange = {(event) => {
+                        setSearchProduct((previousValue)=> {return {...previousValue, opName:event.target.value}});
+                    }}>
                     <option value="0" selected>Equals</option>
                     <option value="1" >Contains</option>
                 </select>
@@ -241,19 +240,25 @@ function ManageProducts() {
                     }}
                 />
                 <label className="form-label">Product Price</label>
-                <select name="selPrice" className="form-select" required value={newProduct.categoryname} id="selPrice" onChange = {changeCategory}>
+                <select name="selPrice" className="form-select" required value={newProduct.categoryname} id="selPrice" 
+                    onChange = {(event) => {
+                        setSearchProduct((previousValue)=> {return {...previousValue, opPrice:event.target.value}});
+                    }}>
                     <option value="0" >&lt;</option>
                     <option value="1" >&le;</option>
                     <option value="2" selected>=</option>
                     <option value="3" >&ge;</option>
                     <option value="4" >&gt;</option>
                 </select>
-                <input type="number" name="searchPrice" className="form-control" 
+                <input type="number" name="searchPrice" className="form-control" min="0.01" step="0.01"
                     onChange = {(event) => setSearchProduct((previousValue)=> {return {...previousValue, price:event.target.value}})}
                 />
 
                 <label className="form-label">Product Category</label>
-                <select name="selCategory" className="form-select" required value={newProduct.categoryname} id="selCategory" onChange = {changeCategory}>                
+                <select name="selCategory" className="form-select" required value={newProduct.categoryname} id="selCategory" 
+                    onChange = {(event) => {
+                        setSearchProduct((previousValue)=> {return {...previousValue, cid:event.target.value}});
+                    }}>
                     <option value="-1" selected>Any Category</option>
                     {(options ?? []).filter(option => option != null).length > 0 ? (
                         options.map((option) => (

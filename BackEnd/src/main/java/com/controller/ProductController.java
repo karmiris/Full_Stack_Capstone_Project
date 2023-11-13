@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.bean.Product;
 import com.bean.Category;
 import com.service.ProductService;
+import com.service.ProductService.findProductClass;
 
 @RestController
 @CrossOrigin
@@ -27,22 +29,20 @@ import com.service.ProductService;
 public class ProductController {
 
 	@Autowired
-	ProductService productService;
-	
+	ProductService productService; 
+
 	// http://localhost:9090/allProducts
 	@GetMapping(value = "allProducts", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Product> getAllProducts() {
 		return productService.findAllProducts();
 	}
-
+	
 	// http://localhost:9090/findProduct/{pname}
-	@RequestMapping(value = "findProduct/{pname}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Product> findProduct (@PathVariable("pname") String pname) {
-		List<Product> result = new ArrayList<>();
-		result.add(productService.findProductByName(pname));
-		return result;
+	@PostMapping(value = "findProduct", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Product> findProduct (@RequestBody findProductClass fclass) {
+		return productService.findProductList(fclass);
 	}
-		
+	
 	// http://localhost:9090/storeProduct/
 	@PostMapping(value = "storeProduct", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public String storeProduct (@RequestBody Product product) {
