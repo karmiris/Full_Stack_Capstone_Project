@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function ManageProducts() {
+function SeeProducts() {
     let navigate = useNavigate();
 
     let [products, setProducts] = useState([null]);
@@ -19,65 +19,42 @@ function ManageProducts() {
     let [options, setOptions] = useState([null]);
     let [optionsLoaded, setOptionsLoaded] = useState(false);
     let uname = useSelector(gs=>gs.login);
-    let isAdmin = useSelector(gs=>gs.isAdmin);
     let host = useSelector(gs=>gs.host);
 
     var formControls = document.getElementsByClassName("form-control");
 
     useEffect(()=> { // runs when component is loaded
         // check admin user is logged in
-        if (uname == "" || !isAdmin) navigate("/login");
+        if (uname == "") navigate("/login");
         
         // load categories
         loadOptions();
 
         // reset checkboxes
-        if (enableProd) document.getElementById("addEnabled").checked = true;
-        else document.getElementById("addEnabled").checked = false;
         if (searchEnableFilter.enName) document.getElementById("enName").checked = true;
         else document.getElementById("enName").checked = false;
         if (searchEnableFilter.enPrice) document.getElementById("enPrice").checked = true;
         else document.getElementById("enPrice").checked = false;
-
-        console.log("newProduct", newProduct);
-        console.log("options", options);
-        console.log("optionsLoaded", optionsLoaded);
-        console.log("enableProd flag: ", enableProd);
-        console.log("searchProduct: ", searchProduct);
-        console.log("searchEnableFilter: ", searchEnableFilter);
     });
 
-    const sleep = ms => new Promise( // delay for ms milliseconds
-        resolve => setTimeout(resolve, ms)
-      );
-
-    let clearForms = function(isUpdate) {
+    let clearForms = function() {
         setSearchProduct({pname: "", enName: false, opName: "0", price: 0.0, enPrice: false, opPrice: "2", cid: "-1"});
         setSearchEnableFilter({enName:false, enPrice:false});
-        if (!isUpdate) {
-            setNewProduct({pname:"", price:0.0, productimage:"", cid:0, cname:"", isEnabled:true});
-            setMessageUpdate("Or Create new Product");
-            setButtonUpdate("Create");
-            setButtonType("btn btn-success");
-            setEnable(true);
-        }
         Array.from(formControls).forEach((formControl) => { formControl.value = ""; });        
-        document.getElementById("addCategory").value = -1;
         document.getElementById("selName").value = 0;
         document.getElementById("selPrice").value = 2;
         document.getElementById("selCategory").value = -1;        
     }
 
     let loadProducts = function(nomessage) {
-        axios.get(host + "allProducts").then(result=>{
+        axios.get(host + "allProductsCustomer").then(result=>{
             setProducts(result.data);
-            console.log("All Products:", result.data);
             if (nomessage)
                 setMessage("All Products Loaded");
         }).catch(error=> {
             setMessage(error);
         })
-        clearForms(false);
+        clearForms();
     }
 
     let productRecord = (products ?? []).filter(p => p != null).length > 0 ? ( // empty list means first element is null
@@ -87,16 +64,10 @@ function ManageProducts() {
                 <td>{p.pname}</td>
                 <td>{p.price}€</td>
                 <td><img src={p.productimage} width="100px" height="100px"/></td>
-                <td>{p.category.categoryname}</td>
-                <td>{(p.isEnabled) ? "Yes" : "No"}</td>                
+                <td>{p.category.categoryname}</td>          
                 <td>
-                    <input type="button" value="Update Product" className="btn btn-warning"
-                        onClick={(event)=> {updateProduct(event, p);}}
-                    />
-                </td>
-                <td>
-                    <input type="button" value="Delete Product" className="btn btn-danger"
-                        onClick={(event)=> {deleteProduct(event, p.pid);}}
+                    <input type="button" value="To Cart" className="btn btn-danger"
+                        onClick={()=> {toCart(p.pid);}}
                     />
                 </td>
             </tr>
@@ -105,94 +76,31 @@ function ManageProducts() {
             <p>No products found</p>
         )
     ;
+
+    let toCart = function(pid) {
+        
+    }
     
-    let deleteProduct = function(event, pid) {
-        axios.delete(host + "deleteProduct/" + pid).then(result=>{
-            setMessage(result.data);
-            loadProducts(false);
-        }).catch(error=> {
-            setMessage(error);
-        })
-        clearForms(false);
-    }
-
-    let insertProduct = function(event) {
-        event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        if (msgupdate == "Update Product") {
-            updateProductFunc();
-            return;
-        }
-        axios.post(host + "storeProduct/", {pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
-                category: {cid: newProduct.cid}, isEnabled: newProduct.isEnabled}).then(result=> {
-            setMessage(result.data);
-            loadProducts(false);
-        }).catch(error=> {
-            setMessage(error);
-        })
-        clearForms(false);
-    }
-
-    let updateProduct = function(event, product) {
-        console.log("Update product: ", product);
-        clearForms(true);
-        setMessageUpdate("Update Product");
-        setButtonUpdate("Update");
-        setButtonType("btn btn-warning");
-        setPidUpdate(product.pid);
-        document.getElementById("addProductName").value = product.pname;
-        document.getElementById("addPrice").value = product.price;
-        document.getElementById("addImage").value = product.productimage;
-        document.getElementById("addCategory").value = product.category.cid;
-        document.getElementById("addEnabled").value = setEnable(product.isEnabled);    
-        setNewProduct((previousValue)=> {return {...previousValue, pname: product.pname, price: product.price, productimage: product.productimage,
-            cid: product.category.cid, cname: product.category.categoryname, isEnabled: product.isEnabled }});
-    }
-
-    let updateProductFunc = function() {
-        axios.post(host + "updateProduct/", {pid: pidupdate, pname: newProduct.pname, price: newProduct.price, productimage: newProduct.productimage,
-                category: {cid: newProduct.cid}, isEnabled: newProduct.isEnabled}).then(result=> {
-            switch(result.data) {
-                case 101:
-                    setMessage("Product name cannot be empty"); break;
-                case 102:
-                    setMessage("Price must be positive"); break;
-                case 103:
-                    setMessage("Product name already exists"); break;
-                case 1:
-                    setMessage("Product Successfully Updated"); break;
-                default:
-                    setMessage("Internal Error");
-            }
-        }).catch(error=> {
-            setMessage(error);
-        })
-            sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
-                clearForms(false);
-                loadProducts(false);            
-        })
-    }
-
     let findProduct = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        axios.post(host + "findProduct/", searchProduct).then(result=> {
+        axios.post(host + "findProductCustomer/", searchProduct).then(result=> {
             setProducts(result.data);
             let x = (result.data ?? []).filter(p => p != null).length;
             setMessage(x + " Product(s) Found");
         }).catch(error=> {
             setMessage(error);
         })
-        clearForms(false);
+        clearForms();
     }
 
     let resetFunc = function(event) {
         event.preventDefault(); // prevents default action on "submit", eg page being refreshed etc
-        clearForms(false);
+        clearForms();
     }
 
     function loadOptions() {
         if (!optionsLoaded) {
             axios.get(host + "allCategories").then(result=>{
-                console.log("result.data", result.data);
                 setOptions(result.data);
                 setOptionsLoaded(true); // stop reloading data and refreshing page
             }).catch(error=> {
@@ -201,14 +109,9 @@ function ManageProducts() {
         }
     }
     
-    let changeCategory = (event) => {
-        let filteredOptions = options.filter(record => record.cid == event.target.value);
-        setNewProduct((previousValue)=> {return {...previousValue, cid: filteredOptions[0].cid, cname: filteredOptions[0].categoryname}});
-    }
-
     return(
         <div>
-            <h2>Product Management Page</h2><br/>
+            <h2>Product Page</h2><br/>
             
             <input type="reset" value="Load All Products" className="btn btn-danger"
                     onClick = {() => loadProducts(true)} /><br/>
@@ -271,43 +174,9 @@ function ManageProducts() {
                         <option disabled hidden>No categories</option>
                     )}
                 </select>
-                <input type="submit" value="Search" className="btn btn-success"/>                
-            </form><br/>
-
-            <form className="form-group" onSubmit = {insertProduct} >
-                <div><b>{msgupdate}:</b></div>
-                <label className="form-label">Product Name</label>
-                <input type="text" name="addProductName" className="form-control" required id="addProductName"
-                    onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, pname:event.target.value}})}
-                />
-                <label className="form-label">Price</label>
-                <input type="number" name="addPrice" className="form-control" required min="0.01" step="0.01" id="addPrice"
-                    onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, price:event.target.value}})}
-                />
-                <label className="form-label">Image URL</label>
-                <input type="url" name="addImage" className="form-control" required id="addImage"
-                    onChange = {(event) => setNewProduct((previousValue)=> {return {...previousValue, productimage:event.target.value}})}
-                />
-                <label className="form-label">Category</label>                
-                <select name="addCategory" className="form-select" required value={newProduct.categoryname} id="addCategory" onChange = {changeCategory}>
-                    <option value="-1" selected disabled hidden>Choose Category</option>
-                    {(options ?? []).filter(option => option != null).length > 0 ? (
-                        options.map((option) => (
-                            <option key={option.cid} value={option.cid}>
-                                {option.categoryname}
-                            </option>
-                        ))
-                    ) : (
-                        <option>No categories</option>
-                    )}
-                </select>            
-                <input type="checkbox" name="addEnabled" id="addEnabled" className="form-check"
-                    onChange = {() => {setEnable(current => !current); setNewProduct((previousValue)=> {return {...previousValue, isEnabled:!newProduct.isEnabled}});}}
-                />
-                <label className="form-label">Enabled</label><br/>
-                <input type="submit" value={btnupdate} className={btntype}/>      
+                <input type="submit" value="Search" className="btn btn-success"/>         
                 <input type="reset" value="Reset" className="btn btn-danger"
-                    onClick = {resetFunc} /><br/>          
+                    onClick = {resetFunc} /><br/>           
             </form><br/>
 
             <h5 style={{color:"red"}}>{msg}</h5>
@@ -319,9 +188,7 @@ function ManageProducts() {
                     <th>Price</th>
                     <th>Image</th>
                     <th>Category Name</th>
-                    <th>Is Enabled?</th>
-                    <th>Update</th>
-                    <th>Delete</th>                    
+                    <th>To Cart</th>                    
                 </tr>
                 </thead>
                 <tbody>
@@ -332,4 +199,4 @@ function ManageProducts() {
     );
 }
 
-export default ManageProducts;
+export default SeeProducts;

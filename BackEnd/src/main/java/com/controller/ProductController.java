@@ -1,31 +1,23 @@
 package com.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.bean.Product;
-import com.bean.Category;
 import com.service.ProductService;
 import com.service.ProductService.findProductClass;
 
 @RestController
 @CrossOrigin
-
 public class ProductController {
 
 	@Autowired
@@ -37,12 +29,24 @@ public class ProductController {
 		return productService.findAllProducts();
 	}
 	
-	// http://localhost:9090/findProduct/{pname}
+	// http://localhost:9090/allProductsCustomer
+	@GetMapping(value = "allProductsCustomer", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Product> allProductsCustomer() {
+		return productService.findAllProductsCustomer();
+	}
+		
+	// http://localhost:9090/findProduct/
 	@PostMapping(value = "findProduct", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Product> findProduct (@RequestBody findProductClass fclass) {
-		return productService.findProductList(fclass);
+		return productService.findProductList(fclass, "admin");
 	}
 	
+	// http://localhost:9090/findProductCustomer/
+	@PostMapping(value = "findProductCustomer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Product> findProductCustomer (@RequestBody findProductClass fclass) {
+		return productService.findProductList(fclass, "customer");
+	}
+		
 	// http://localhost:9090/storeProduct/
 	@PostMapping(value = "storeProduct", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public String storeProduct (@RequestBody Product product) {

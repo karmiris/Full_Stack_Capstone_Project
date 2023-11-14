@@ -8,8 +8,13 @@ function Navigation() {
     if (username == "")
         return (
             <div>
-                <Link to="/login">
+                <Link to="/home">
                     <button type="button" className="btn btn-primary">
+                        Home
+                    </button>
+                </Link>
+                <Link to="/login">
+                    <button type="button" className="btn btn-success">
                         Login
                     </button>
                 </Link>
@@ -61,6 +66,16 @@ function Navigation() {
             <Link to="/home">
                     <button type="button" className="btn btn-primary">
                         Home
+                    </button>
+                </Link>
+                <Link to="/seeProducts">
+                    <button type="button" className="btn btn-warning">
+                        See Products
+                    </button>
+                </Link>
+                <Link to="/checkout">
+                    <button type="button" className="btn btn-success">
+                        Checkout Products in Cart
                     </button>
                 </Link>
                 <Link to="/changePass">

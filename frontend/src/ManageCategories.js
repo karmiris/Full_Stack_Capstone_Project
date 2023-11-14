@@ -15,12 +15,13 @@ function ManageCategories() {
     let [btntype, setButtonType]=useState("btn btn-success");
     let [msg, setMessage]=useState("");
     let uname = useSelector(gs=>gs.login);
+    let isAdmin = useSelector(gs=>gs.isAdmin);
     let host = useSelector(gs=>gs.host);
 
     var formControls = document.getElementsByClassName("form-control");
 
     useEffect(()=> { // runs when component is loaded
-        if (uname == "") navigate("/login"); // check user is logged in
+        if (uname == "" || !isAdmin) navigate("/login"); // check user is logged in
     });
 
     const sleep = ms => new Promise( // delay for ms milliseconds

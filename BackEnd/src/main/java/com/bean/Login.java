@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Login {
 
@@ -18,8 +20,9 @@ public class Login {
 	private String password;
 	private int isadmin;
 	
-	@OneToMany (mappedBy = "login")
-	//private List<OrderInfo> listOfOrders;
+	@JsonBackReference
+	@OneToMany (mappedBy = "username")
+	private List<OrderInfo> listOfOrders;
 
 	public int getUid() {
 		return uid;
@@ -53,19 +56,18 @@ public class Login {
 		this.isadmin = isadmin;
 	}
 
-	//public List<OrderInfo> getListOfOrders() {
-		//return listOfOrders;
-	//}
+	public List<OrderInfo> getListOfOrders() {
+		return listOfOrders;
+	}
 
-	//public void addOrder (OrderInfo orderInfo) {
-		//this.listOfOrders.add(orderInfo);
-		//orderInfo.setLogin(this);
-	//}
+	public void setListOfOrders(List<OrderInfo> listOfOrders) {
+		this.listOfOrders = listOfOrders;
+	}
 
-	//@Override
-	//public String toString() {
-		//return "Login [uid=" + uid + ", username=" + username + ", password=" + password + ", isadmin=" + isadmin
-			//	+ ", listOfOrders=" + listOfOrders + "]";
-	//}
+	@Override
+	public String toString() {
+		return "Login [uid=" + uid + ", username=" + username + ", password=" + password + ", isadmin=" + isadmin
+				+ ", listOfOrders=" + listOfOrders + "]";
+	}	
 
 }

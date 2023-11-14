@@ -10,7 +10,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Product {
@@ -27,8 +27,9 @@ public class Product {
 	@ManyToOne 
     private Category category;
 	
-	//@OneToMany (mappedBy = "product")
-	//private List<OrderInfo> listOfOrders;
+	@JsonBackReference
+	@OneToMany (mappedBy = "product")
+	private List<OrderInfo> listOfOrders;
 
 	public int getPid() {
 		return pid;
@@ -54,6 +55,14 @@ public class Product {
 		this.price = price;
 	}
 
+	public boolean getIsEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+
 	public String getProductimage() {
 		return productimage;
 	}
@@ -69,34 +78,19 @@ public class Product {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-	
-	public boolean getIsEnabled() {
-		return isEnabled;
-	}
 
-	public void setIsEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
-	}
-	
-/*
 	public List<OrderInfo> getListOfOrders() {
 		return listOfOrders;
 	}
-	
-	public void addOrder (OrderInfo orderInfo) {
-		this.listOfOrders.add(orderInfo);
-		orderInfo.setProduct(this);
+
+	public void setListOfOrders(List<OrderInfo> listOfOrders) {
+		this.listOfOrders = listOfOrders;
 	}
 
 	@Override
 	public String toString() {
-		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", productimage=" + productimage
-				+ ", category=" + category + ", listOfOrders=" + listOfOrders + "]";
+		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", isEnabled=" + isEnabled
+				+ ", productimage=" + productimage + ", category=" + category + ", listOfOrders=" + listOfOrders + "]";
 	}
-*/
-	@Override
-	public String toString() {
-		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", productimage=" + productimage
-				+ ", category=" + category + "]";
-	}
+
 }

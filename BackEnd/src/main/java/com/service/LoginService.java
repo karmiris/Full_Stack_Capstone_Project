@@ -41,14 +41,11 @@ public class LoginService {
 	public int signIn (Login login) {
 		Login ll = loginRepository.signIn(login.getUsername(), login.getPassword());
 		if (ll == null) 
-			//return "Invalid username or password";
 			return -1;
 		else {
 			if (ll.getIsadmin() == 1)
-				//return "Admin has successfully logged in!";
 				return 2;
 			else 
-				//return "Customer has successfully logged in!";
 				return 1;
 		}
 		

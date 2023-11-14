@@ -1,4 +1,4 @@
-function Home() {
+function Checkout() {
     return(
         <div>
             <h4>Medicare is a company that supplies medicines and a couple of other healthcare essentials at an affordable price.</h4>
@@ -7,4 +7,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Checkout;

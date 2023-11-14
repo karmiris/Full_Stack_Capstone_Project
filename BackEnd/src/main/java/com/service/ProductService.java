@@ -30,12 +30,12 @@ public class ProductService {
 		public String cid;		
 	}
 	
-	public List<Product> findProductList(findProductClass fclass) {
+	public List<Product> findProductList(findProductClass fclass, String user) {
 		List<Product> result = findAllProducts();
 		
 		if (fclass.enName) {
 			switch (fclass.opName) {
-				case "0": result.removeIf(product -> product.getPname() != fclass.pname); break;
+				case "0": result.removeIf(product -> !product.getPname().equals(fclass.pname)); break;
 				case "1": result.removeIf(product -> !product.getPname().contains(fclass.pname)); break;
 			}
 		}
@@ -52,6 +52,10 @@ public class ProductService {
 		
 		if (Integer.parseInt(fclass.cid) != -1) {
 			result.removeIf(product -> product.getCategory().getCid() != Integer.parseInt(fclass.cid));
+		}
+		
+		if (user == "customer") {
+			result.removeIf(product -> !product.getIsEnabled());
 		}
 		
 		return result;
@@ -83,8 +87,6 @@ public class ProductService {
 		Product product = findProduct(pid);
 		if (product == null)
 			return "Product not present";
-		//if (!product.getListOfProducts().isEmpty()) 
-			//return "Delete products assigned to category first";
 		try {			
 			productRepository.delete(product);
 			return "Product successfully removed";
@@ -112,6 +114,12 @@ public class ProductService {
 	
 	public List<Product> findAllProducts() {
 		return productRepository.findAll();
+	}
+	
+	public List<Product> findAllProductsCustomer() {
+		List<Product> result = findAllProducts();
+		result.removeIf(product -> !product.getIsEnabled());
+		return result;
 	}
 	
 	public Product findProduct(int pid) {

@@ -7,11 +7,13 @@ import Navigation from './Navigation';
 import Message from './Message';
 import Login from './Login';
 import Signup from './Signup';
-  import Home from './Home';
+import Home from './Home';
 import ManageCategories from './ManageCategories';
 import ManageProducts from './ManageProducts';
 import ViewUsers from './ViewUsers';
 import ChangePass from './ChangePass';
+  import SeeProducts from './SeeProducts';
+  import Checkout from './Checkout';
 import Logout from './Logout';
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
         <Route path='/manageProducts' element={<ManageProducts/>}></Route>
         <Route path='/viewUsers' element={<ViewUsers/>}></Route>
         <Route path='/changePass' element={<ChangePass/>}></Route>
+        <Route path='/seeProducts' element={<SeeProducts/>}></Route>
+        <Route path='/checkout' element={<Checkout/>}></Route>
         <Route path='/logout' element={<Logout/>}></Route>
       </Routes>
     </div>
