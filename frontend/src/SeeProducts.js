@@ -72,7 +72,7 @@ function SeeProducts() {
     ;
 
     let toCart = function(pid) {
-        axios.toCart(host + "findProductCustomer/", {product: {pid: pid}, username: {username: uname}}).then(result=> {
+        axios.post(host + "toCart/", {pid: pid, uname: uname}).then(result=> {
             setMessage(result.data);
         }).catch(error=> {
             setMessage(error);
