@@ -9,13 +9,7 @@ function SeeProducts() {
     let [products, setProducts] = useState([null]);
     let [searchProduct, setSearchProduct] = useState({pname: "", enName: false, opName: "0", price: 0.0, enPrice: false, opPrice: "2", cid: "-1"});
     let [searchEnableFilter, setSearchEnableFilter] = useState({enName:false, enPrice:false});
-    let [newProduct, setNewProduct] = useState({pname: "", price: 0.0, productimage: "", cid: -1, cname: "", isEnabled: true});
-    let [msgupdate, setMessageUpdate] = useState("Or Create new Product");
-    let [btnupdate, setButtonUpdate] = useState("Create");
-    let [pidupdate, setPidUpdate]=useState(0);
-    let [btntype, setButtonType] = useState("btn btn-success");
     let [msg, setMessage] = useState("");
-    let [enableProd, setEnable] = useState(true);
     let [options, setOptions] = useState([null]);
     let [optionsLoaded, setOptionsLoaded] = useState(false);
     let uname = useSelector(gs=>gs.login);
@@ -78,7 +72,12 @@ function SeeProducts() {
     ;
 
     let toCart = function(pid) {
-        
+        axios.toCart(host + "findProductCustomer/", {product: {pid: pid}, username: {username: uname}}).then(result=> {
+            setMessage(result.data);
+        }).catch(error=> {
+            setMessage(error);
+        })
+        clearForms();
     }
     
     let findProduct = function(event) {
@@ -126,7 +125,7 @@ function SeeProducts() {
                     }}
                 />
                 <label className="form-label">Product Name</label>
-                <select name="selName" className="form-select" value={newProduct.categoryname} id="selName" 
+                <select name="selName" className="form-select" value={searchProduct.opName} id="selName" 
                     onChange = {(event) => {
                         setSearchProduct((previousValue)=> {return {...previousValue, opName:event.target.value}});
                     }}>
@@ -144,7 +143,7 @@ function SeeProducts() {
                     }}
                 />
                 <label className="form-label">Product Price</label>
-                <select name="selPrice" className="form-select" required value={newProduct.categoryname} id="selPrice" 
+                <select name="selPrice" className="form-select" required value={searchProduct.opPrice} id="selPrice" 
                     onChange = {(event) => {
                         setSearchProduct((previousValue)=> {return {...previousValue, opPrice:event.target.value}});
                     }}>
@@ -159,7 +158,7 @@ function SeeProducts() {
                 />
 
                 <label className="form-label">Product Category</label>
-                <select name="selCategory" className="form-select" required value={newProduct.categoryname} id="selCategory" 
+                <select name="selCategory" className="form-select" required value={searchProduct.cid} id="selCategory" 
                     onChange = {(event) => {
                         setSearchProduct((previousValue)=> {return {...previousValue, cid:event.target.value}});
                     }}>
