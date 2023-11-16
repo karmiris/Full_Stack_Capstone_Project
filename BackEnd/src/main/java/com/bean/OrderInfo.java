@@ -12,6 +12,7 @@ public class OrderInfo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int oid;
+	private int quantity;
 	
 	@ManyToOne 
     private Login username;
@@ -25,6 +26,14 @@ public class OrderInfo {
 
 	public void setOid(int oid) {
 		this.oid = oid;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 
 	public Login getUsername() {
@@ -45,7 +54,7 @@ public class OrderInfo {
 
 	@Override
 	public String toString() {
-		return "Order [oid=" + oid + ", username=" + username + ", product=" + product + "]";
+		return "Order [oid=" + oid + ", quantity=" + quantity + ", username=" + username + ", product=" + product + "]";
 	}
 	
 }
