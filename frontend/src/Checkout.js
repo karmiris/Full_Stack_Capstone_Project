@@ -31,8 +31,9 @@ function Checkout() {
                 setCart(result.data);
                 setCartLoaded(true); // stop reloading data and refreshing page
                 const orders = result.data;
-                const sum = orders.reduce((acc, order) => acc + order.product.price, 0);
-                setSummary("Products: " + result.data.length + ", Total Cost: " + sum +"€" );
+                const sum = orders.reduce((acc, order) => acc + order.product.price * order.quantity, 0);
+                const count = orders.reduce((acc, order) => acc + order.quantity, 0);
+                setSummary("Products in Cart: " + count + ", Total Cost: " + sum.toFixed(2) +"€" );
             }).catch(error=> {
                 setSummary(error);
             })        
@@ -49,7 +50,15 @@ function Checkout() {
                 <td>{p.product.price}€</td>
                 <td><img src={p.product.productimage} width="100px" height="100px"/></td>
                 <td>{p.product.category.categoryname}</td>
-                <td>{p.quantity}</td>
+                <td>
+                    {p.quantity}
+                    <input type="button" value="+" className="btn btn-success"
+                        onClick={()=> {itemInc(p.oid);}}
+                    />
+                    <input type="button" value="-" className="btn btn-warning"
+                        onClick={()=> {itemDec(p.oid);}}
+                    />
+                </td>
                 <td>
                     <input type="button" value="Remove from Cart" className="btn btn-danger"
                         onClick={()=> {deleteCart(p.oid);}}
@@ -58,9 +67,35 @@ function Checkout() {
             </tr>
             ))
         ) : (
-            <p>No products found</p>
+            <p>No products in cart</p>
         )
     ;
+
+    let itemInc = function(oid) {
+        setMessage("");
+        axios.post(host + "itemInc/" + oid).then(result=> {
+            setMessage(result.data);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        }).catch(error=> {
+            setMessage(error);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        })
+    }
+
+    let itemDec = function(oid) {
+        setMessage("");
+        axios.post(host + "itemDec/" + oid).then(result=> {
+            setMessage(result.data);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        }).catch(error=> {
+            setMessage(error);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        })
+    }
 
     let deleteCart = function(oid) {
         setMessage("");
@@ -75,10 +110,27 @@ function Checkout() {
         })
     }
 
+    let checkOut = function() {
+        setMessage("");
+        axios.post(host + "checkout/" + uname).then(result=> {
+            setMessage(result.data);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        }).catch(error=> {
+            setMessage(error);
+            setCartLoaded(false); // reload cart
+            loadCart();
+        })
+    }
+
     return(
         <div>
             <h2>Products in your cart:</h2><br/>
          
+            <input type="button" value="CheckOut" className="btn btn-danger"
+                onClick={()=> {checkOut();}}
+            /><br/><br/>
+
             <h5 style={{color:"red"}}>{msg}</h5>
             <h5 style={{color:"red"}}>{summary}</h5>
             <table className="table table-success">

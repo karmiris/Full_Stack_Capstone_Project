@@ -67,7 +67,6 @@ public class ProductService {
 		Product result = findProductByName(product.getPname());
 		if (result != null) 
 			return "Product name already exists";
-		System.out.println("product: " + product);
 		try {
 			Category category = categoryRepository.findCategoryByCid(product.getCategory().getCid());
 		}

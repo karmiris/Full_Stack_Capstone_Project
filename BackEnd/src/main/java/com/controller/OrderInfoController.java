@@ -40,5 +40,23 @@ public class OrderInfoController {
 	public String toCart (@RequestBody toCartClass newItem) {
 		return orderInfoService.toCart(newItem.pid, newItem.uname);
 	}
-		
+	
+	//http://localhost:9090/itemInc/{oid}  // increase item quantity +1
+	@PostMapping(value = "itemInc/{oid}")
+	public String itemInc (@PathVariable("oid") int oid) {			
+		return orderInfoService.itemInc(oid);
+	}
+	
+	//http://localhost:9090/itemDec/{oid}  // decrease item quantity -1
+	@PostMapping(value = "itemDec/{oid}")
+	public String itemDec (@PathVariable("oid") int oid) {			
+		return orderInfoService.itemDec(oid);
+	}
+	
+	//http://localhost:9090/checkout/{uname}  // clear all cart items for user
+	@PostMapping(value = "checkout/{uname}")
+	public String checkout (@PathVariable("uname") String username) {			
+		return orderInfoService.checkout(username);
+	}
+	
 }
