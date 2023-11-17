@@ -15,4 +15,6 @@ public interface OrderInfoRepository extends JpaRepository<OrderInfo, Integer>{
 	@Query("select o from OrderInfo o inner join o.username u where u.username = :username")
 	public List<OrderInfo> findOrders(@Param("username") String username);
 	
+	@Query("select o from OrderInfo o where o.oid = :oid")
+	public OrderInfo findOrderInfo(@Param("oid") Integer oid);
 }

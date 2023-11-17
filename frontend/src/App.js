@@ -12,8 +12,8 @@ import ManageCategories from './ManageCategories';
 import ManageProducts from './ManageProducts';
 import ViewUsers from './ViewUsers';
 import ChangePass from './ChangePass';
-  import SeeProducts from './SeeProducts';
-  import Checkout from './Checkout';
+import SeeProducts from './SeeProducts';
+import Checkout from './Checkout';
 import Logout from './Logout';
 
 function App() {

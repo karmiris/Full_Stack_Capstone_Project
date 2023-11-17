@@ -44,6 +44,7 @@ public class OrderInfoService {
 			OrderInfo newItem = new OrderInfo();
 			newItem.setProduct(product);
 			newItem.setUsername(login);
+			newItem.setQuantity(1);
 			orderInfoRepository.save(newItem);
 			return "Product added in cart";
 		}
@@ -52,4 +53,20 @@ public class OrderInfoService {
 		}
 	}
 	
+	public String removeCart(int oid) {		
+		OrderInfo orderInfo = findOrderInfo(oid);
+		if (orderInfo == null)
+			return "Product not present in cart";
+		try {			
+			orderInfoRepository.delete(orderInfo);
+			return "Product successfully removed from cart";
+		}
+		catch(Exception e) {
+			return "Product removal from cart failed: " + e.getMessage();
+		}		 
+	}
+	
+	public OrderInfo findOrderInfo(int oid) {
+		return orderInfoRepository.findOrderInfo(oid);
+	}
 }

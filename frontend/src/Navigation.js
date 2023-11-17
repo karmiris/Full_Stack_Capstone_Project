@@ -70,12 +70,12 @@ function Navigation() {
                 </Link>
                 <Link to="/seeProducts">
                     <button type="button" className="btn btn-warning">
-                        See Products
+                        View Products
                     </button>
                 </Link>
                 <Link to="/checkout">
                     <button type="button" className="btn btn-success">
-                        Checkout Products in Cart
+                        View Cart
                     </button>
                 </Link>
                 <Link to="/changePass">

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,12 @@ public class OrderInfoController {
 	@RequestMapping(value = "findOrders/{uname}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<OrderInfo> findOrders (@PathVariable("uname") String username) {
 		return orderInfoService.findOrders(username);
+	}
+	
+	//http://localhost:9090/removeCart/1  // to delete cart item oid 1
+	@DeleteMapping(value = "removeCart/{oid}")
+	public String removeCart (@PathVariable("oid") int oid) {			
+		return orderInfoService.removeCart(oid);
 	}
 	
 	// http://localhost:9090/toCart/

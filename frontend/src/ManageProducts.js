@@ -166,9 +166,9 @@ function ManageProducts() {
         }).catch(error=> {
             setMessage(error);
         })
-            sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
-                clearForms(false);
-                loadProducts(false);            
+        sleep(100).then(() => { // delay 100 milliseconds for database entry to be updated before loading again
+            clearForms(false);
+            loadProducts(false);            
         })
     }
 

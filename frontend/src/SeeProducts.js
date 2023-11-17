@@ -72,6 +72,7 @@ function SeeProducts() {
     ;
 
     let toCart = function(pid) {
+        setMessage("");
         axios.post(host + "toCart/", {pid: pid, uname: uname}).then(result=> {
             setMessage(result.data);
         }).catch(error=> {
