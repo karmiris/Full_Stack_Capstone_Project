@@ -2,8 +2,8 @@
 let initialState = {                
     isAdmin: false,
     login: "",
-    //host: "http://localhost:9090/"
-    host: "http://35.175.254.167:9090/"
+    host: "http://localhost:9090/"
+    //host: "http://35.175.254.167:9090/"
 }
 
 // global variables update
