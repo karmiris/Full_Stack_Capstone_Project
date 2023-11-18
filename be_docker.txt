@@ -67,8 +67,10 @@ sudo yum search docker
 sudo yum info docker
 -- run installer
 sudo yum install -y docker
+-- start service
+sudo service docker start
 -- confirm installation
-docker version
+sudo docker version
 
 -- download git repo  (not needed)
 mkdir repo
