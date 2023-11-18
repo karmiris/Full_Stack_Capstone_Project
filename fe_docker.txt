@@ -1,0 +1,54 @@
+
+
+-- install Java 1.8
+sudo yum install -y java-1.8.0-devel
+java -version
+
+-- install git
+sudo yum install -y git
+git version
+
+-- install docker
+-- refresh yum list
+sudo yum update
+-- find docker image
+sudo yum search docker
+-- get docker version
+sudo yum info docker
+-- run installer
+sudo yum install -y docker
+-- start service
+sudo service docker start
+-- confirm installation
+sudo docker version
+
+-- install Nodejs and NPM
+-- add repository
+curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
+-- refresh yum list
+sudo yum update
+-- run installer
+sudo yum install -y nodejs
+-- confirm installation
+node -v
+npm -v
+
+-- install yarn (not needed)
+curl -o- -L https://yarnpkg.com/install.sh | bash
+
+-- download git repo  
+mkdir repo
+cd repo
+git clone https://github.com/karmiris/Full_Stack_Capstone_Project.git
+
+-- dockerize and run the image (not needed)
+cd Full_Stack_Capstone_Project
+cd frontend
+npm install
+npm run build
+sudo docker build --tag=front_end:latest .
+sudo docker images
+sudo docker run -d -p80:80 front_end:latest    (nginx default port is 80, not 3000 like npm react)
+sudo docker ps -a
+
+
