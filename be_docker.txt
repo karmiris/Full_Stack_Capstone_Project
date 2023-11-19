@@ -140,7 +140,7 @@ sudo docker ps
 -- get jenkins admin password
 sudo docker exec <container_name> cat /var/jenkins_home/secrets/initialAdminPassword
 
-http://{host}:8886	(open firewall)
+http://35.175.254.167:9090/allUsers	(open firewall)
 
 -- create job
 add git
