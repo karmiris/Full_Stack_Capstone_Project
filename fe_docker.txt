@@ -8,6 +8,19 @@ java -version
 sudo yum install -y git
 git version
 
+-- install Nodejs and NPM
+-- refresh yum list
+sudo yum update
+-- add repository
+curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
+-- refresh yum list
+sudo yum update
+-- run installer
+sudo yum install -y nodejs
+-- confirm installation
+node -v
+npm -v
+
 -- install docker
 -- refresh yum list
 sudo yum update
@@ -21,17 +34,6 @@ sudo yum install -y docker
 sudo service docker start
 -- confirm installation
 sudo docker version
-
--- install Nodejs and NPM
--- add repository
-curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash -
--- refresh yum list
-sudo yum update
--- run installer
-sudo yum install -y nodejs
--- confirm installation
-node -v
-npm -v
 
 -- install yarn (not needed)
 curl -o- -L https://yarnpkg.com/install.sh | bash
